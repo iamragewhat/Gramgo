@@ -8,250 +8,210 @@ from io import BytesIO
 import time
 
 # -----------------------------------------------------------------------------
-# 1. PAGE CONFIG & ANIMATED HIGH-VISIBILITY DESIGN SYSTEM
+# 1. PAGE CONFIG & GAMIFIED ACCESSIBLE DESIGN SYSTEM
 # -----------------------------------------------------------------------------
 st.set_page_config(
-    page_title="ROUTELESS // Dynamic Transit Command",
-    page_icon="🚌",
+    page_title="ROUTELESS // Kids, Students & Senior Transit Game",
+    page_icon="🚀",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
 
-    /* Global Animations */
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(8px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes pulseGlow {
-        0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4); }
-        70% { box-shadow: 0 0 0 10px rgba(79, 70, 229, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); }
-    }
-
-    @keyframes floatBadge {
-        0% { transform: translateY(0px); }
-        50% { transform: translateY(-3px); }
-        100% { transform: translateY(0px); }
+    /* Playful Animations & Glowing Buttons */
+    @keyframes bounceGlow {
+        0% { transform: translateY(0px); box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4); }
+        50% { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(79, 70, 229, 0.2); }
+        100% { transform: translateY(0px); box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); }
     }
 
     .stApp {
-        background: linear-gradient(135deg, #EEF2FF 0%, #F8FAFC 50%, #F1F5F9 100%);
+        background: linear-gradient(135deg, #F0FDF4 0%, #EFF6FF 50%, #FAF5FF 100%);
         color: #0F172A;
         font-family: 'Plus Jakarta Sans', sans-serif;
-        animation: fadeIn 0.5s ease-out;
     }
 
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {background: transparent !important;}
 
-    /* Sidebar Styling */
+    /* Highly Visible Side Panel / Sidebar */
     [data-testid="stSidebar"] {
         background-color: #FFFFFF;
-        border-right: 3px solid #0F172A;
-        box-shadow: 4px 0px 20px rgba(15, 23, 42, 0.05);
+        border-right: 3.5px solid #0F172A;
+        box-shadow: 6px 0px 25px rgba(15, 23, 42, 0.08);
     }
     [data-testid="stSidebar"] h3 {
-        font-family: 'Outfit', sans-serif !important;
-        font-size: 1.1rem !important;
-        font-weight: 800 !important;
-        color: #312E81 !important;
-        background: #EEF2FF;
-        padding: 10px 14px;
-        border-radius: 10px;
-        border: 2px solid #0F172A;
+        font-family: 'Fredoka', sans-serif !important;
+        font-size: 1.2rem !important;
+        font-weight: 700 !important;
+        color: #FFFFFF !important;
+        background: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%);
+        padding: 12px 16px;
+        border-radius: 12px;
+        border: 2.5px solid #0F172A;
         box-shadow: 3px 3px 0px #0F172A;
+        text-align: center;
+        letter-spacing: 0.5px;
     }
 
-    /* Vibrant Top Command Banner with Float Effect */
+    /* Chunky, Playful Command Banner */
     .command-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 24px 32px;
-        background: linear-gradient(135deg, #4338CA 0%, #0284C7 50%, #0D9488 100%);
-        border: 3px solid #0F172A;
-        border-radius: 18px;
+        padding: 26px 34px;
+        background: linear-gradient(135deg, #6366F1 0%, #3B82F6 50%, #10B981 100%);
+        border: 3.5px solid #0F172A;
+        border-radius: 20px;
         margin-bottom: 24px;
         box-shadow: 6px 6px 0px #0F172A;
-        animation: floatBadge 4s ease-in-out infinite;
+        animation: bounceGlow 4s ease-in-out infinite;
     }
     .command-title {
-        font-family: 'Outfit', sans-serif;
-        font-size: 1.85rem;
-        font-weight: 900;
+        font-family: 'Fredoka', sans-serif;
+        font-size: 2rem;
+        font-weight: 700;
         color: #FFFFFF !important;
         margin: 0;
-        letter-spacing: 0.5px;
         text-shadow: 2px 2px 0px rgba(15, 23, 42, 0.3);
     }
     .command-subtitle {
         font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 1rem;
+        font-size: 1.05rem;
         font-weight: 700;
-        color: #E0F2FE !important;
+        color: #FEF08A !important;
         margin-top: 6px;
     }
     .status-badge {
-        font-family: 'Outfit', sans-serif;
-        font-size: 0.92rem;
-        padding: 10px 20px;
+        font-family: 'Fredoka', sans-serif;
+        font-size: 1rem;
+        padding: 12px 22px;
         border-radius: 999px;
-        font-weight: 800;
+        font-weight: 700;
         border: 3px solid #0F172A;
         box-shadow: 4px 4px 0px #0F172A;
-        animation: pulseGlow 2s infinite;
+        background: #FEF08A;
+        color: #854D0E !important;
     }
-    .status-crisis { background: #FEE2E2; color: #DC2626 !important; }
-    .status-normal { background: #ECFDF5; color: #059669 !important; }
 
-    /* Animated KPI Cards */
+    /* Oversized, Super-Clickable KPI Cards */
     .kpi-card {
-        border: 3px solid #0F172A;
-        border-radius: 16px;
-        padding: 20px 22px;
+        border: 3.5px solid #0F172A;
+        border-radius: 18px;
+        padding: 22px;
         box-shadow: 5px 5px 0px #0F172A;
-        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-        animation: fadeIn 0.6s ease-out;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        cursor: pointer;
     }
     .kpi-card:hover {
         transform: translateY(-4px) translateX(-2px);
-        box-shadow: 8px 8px 0px #0F172A;
+        box-shadow: 9px 9px 0px #0F172A;
     }
-    .kpi-emerald { background: linear-gradient(135deg, #ECFDF5 0%, #A7F3D0 100%); }
-    .kpi-sky     { background: linear-gradient(135deg, #F0F9FF 0%, #BAE6FD 100%); }
-    .kpi-amber   { background: linear-gradient(135deg, #FFFBEB 0%, #FDE68A 100%); }
-    .kpi-indigo  { background: linear-gradient(135deg, #EEF2FF 0%, #C7D2FE 100%); }
+    .kpi-emerald { background: linear-gradient(135deg, #ECFDF5 0%, #6EE7B7 100%); }
+    .kpi-sky     { background: linear-gradient(135deg, #EFF6FF 0%, #93C5FD 100%); }
+    .kpi-amber   { background: linear-gradient(135deg, #FEFCE8 0%, #FDE047 100%); }
+    .kpi-indigo  { background: linear-gradient(135deg, #EEF2FF 0%, #A5B4FC 100%); }
 
     .kpi-label {
-        font-family: 'Outfit', sans-serif;
-        font-size: 0.85rem;
+        font-family: 'Fredoka', sans-serif;
+        font-size: 0.95rem;
         text-transform: uppercase;
-        letter-spacing: 0.8px;
         color: #1E293B !important;
-        font-weight: 800;
+        font-weight: 700;
         margin-bottom: 6px;
     }
     .kpi-value {
-        font-family: 'Outfit', sans-serif;
-        font-size: 2.3rem;
-        font-weight: 900;
+        font-family: 'Fredoka', sans-serif;
+        font-size: 2.5rem;
+        font-weight: 700;
         color: #0F172A !important;
         line-height: 1.1;
     }
     .kpi-trend {
-        font-size: 0.88rem;
+        font-size: 0.92rem;
         margin-top: 10px;
         font-weight: 800;
         color: #0F172A !important;
     }
 
-    /* Protocol & Action Cards */
-    .protocol-box {
-        background: #FFFFFF;
-        border: 3px solid #0F172A;
-        border-left: 8px solid #4F46E5;
-        padding: 18px 20px;
-        border-radius: 14px;
-        margin-bottom: 16px;
-        box-shadow: 5px 5px 0px #0F172A;
-        transition: transform 0.2s ease;
-    }
-    .protocol-box:hover {
-        transform: translateX(3px);
-    }
-    .protocol-title {
-        font-family: 'Outfit', sans-serif;
-        font-size: 1.08rem;
-        font-weight: 900;
-        color: #0F172A !important;
-        margin-bottom: 6px;
-    }
-    .protocol-desc {
-        font-size: 0.95rem;
-        font-weight: 600;
-        color: #1E293B !important;
-        line-height: 1.6;
-    }
-
-    /* High-Visibility Animated Buttons */
+    /* Chunky Clickable Buttons */
     .stButton > button {
-        background: linear-gradient(135deg, #4F46E5 0%, #2563EB 100%) !important;
+        background: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%) !important;
         color: #FFFFFF !important;
-        border: 3px solid #0F172A !important;
-        border-radius: 12px !important;
-        font-family: 'Outfit', sans-serif !important;
-        font-weight: 800 !important;
-        font-size: 1rem !important;
-        padding: 0.65rem 1.2rem !important;
+        border: 3.5px solid #0F172A !important;
+        border-radius: 14px !important;
+        font-family: 'Fredoka', sans-serif !important;
+        font-weight: 700 !important;
+        font-size: 1.1rem !important;
+        padding: 0.75rem 1.4rem !important;
         box-shadow: 4px 4px 0px #0F172A !important;
-        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        transition: all 0.15s ease !important;
     }
     .stButton > button:hover {
-        background: linear-gradient(135deg, #4338CA 0%, #1D4ED8 100%) !important;
         transform: translateY(-2px) translateX(-2px);
-        box-shadow: 6px 6px 0px #0F172A !important;
+        box-shadow: 7px 7px 0px #0F172A !important;
     }
 
-    /* Animated Navigation Tabs */
+    /* Big Clickable Navigation Tabs */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 10px;
+        gap: 12px;
         background-color: #FFFFFF;
-        padding: 10px;
-        border-radius: 16px;
-        border: 3px solid #0F172A;
+        padding: 12px;
+        border-radius: 18px;
+        border: 3.5px solid #0F172A;
         box-shadow: 5px 5px 0px #0F172A;
     }
     .stTabs [data-baseweb="tab"] {
-        font-family: 'Outfit', sans-serif;
-        font-size: 0.95rem;
+        font-family: 'Fredoka', sans-serif;
+        font-size: 1.05rem;
         color: #1E293B !important;
-        border-radius: 10px;
-        padding: 12px 18px;
-        font-weight: 800;
+        border-radius: 12px;
+        padding: 12px 20px;
+        font-weight: 700;
+        border: 2px solid transparent;
         transition: all 0.2s ease;
     }
     .stTabs [aria-selected="true"] {
-        background: linear-gradient(135deg, #4F46E5 0%, #0284C7 100%) !important;
+        background: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%) !important;
         color: #FFFFFF !important;
+        border: 2.5px solid #0F172A !important;
         box-shadow: 3px 3px 0px #0F172A;
     }
 
-    /* Headers & Inputs */
+    /* Readable Headings & Form Inputs */
     h1, h2, h3, h4 {
-        font-family: 'Outfit', sans-serif !important;
+        font-family: 'Fredoka', sans-serif !important;
         color: #0F172A !important;
-        font-weight: 900 !important;
+        font-weight: 700 !important;
     }
     p, label, .stMarkdown {
         color: #0F172A !important;
         font-family: 'Plus Jakarta Sans', sans-serif !important;
-        font-size: 0.98rem;
+        font-size: 1.05rem;
         font-weight: 700;
     }
     [data-baseweb="select"] > div, [data-baseweb="input"] > div {
         background-color: #FFFFFF !important;
-        border: 2.5px solid #0F172A !important;
-        border-radius: 10px !important;
+        border: 3px solid #0F172A !important;
+        border-radius: 12px !important;
         color: #0F172A !important;
         font-weight: 700 !important;
     }
     [data-testid="stDataFrame"], [data-testid="stExpander"], [data-testid="stForm"] {
         background-color: #FFFFFF !important;
-        border: 3px solid #0F172A !important;
-        border-radius: 16px !important;
-        box-shadow: 5px 5px 0px #0F172A !important;
+        border: 3.5px solid #0F172A !important;
+        border-radius: 18px !important;
+        box-shadow: 6px 6px 0px #0F172A !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# 2. MULTILINGUAL VOICE & UI STRINGS
+# 2. MULTILINGUAL VOICE & FRIENDLY STRINGS
 # -----------------------------------------------------------------------------
 LANG_CONFIG = {
     "English": {"code": "en"},
@@ -261,37 +221,37 @@ LANG_CONFIG = {
 
 UI_STRINGS = {
     "English": {
-        "title": "ROUTELESS // Smart Rural Student Transit",
-        "subtitle": "Live Student Dispatch, Real-Time Crowd Analytics & Multilingual Voice AI",
-        "guide_title": "👋 Quick Start Guide (Easy 3-Step Overview)",
+        "title": "🚌 ROUTELESS // Kids & Student Transit Game",
+        "subtitle": "Help students catch buses, explore routes, and beat the weather challenge!",
+        "guide_title": "🌟 Welcome! Click here for a Super-Easy 3-Step Guide",
         "guide_body": """
-        * **Step 1 — Add & Dispatch Students:** Open the **➕ Add & Dispatch Student** tab to register a student, assign a bus, and send them directly to the Exam Center.
-        * **Step 2 — Test Crisis Scenarios:** Use the **1-Click Scenario Presets** on the left sidebar to see how the AI handles bus breakdowns, +40% exam crowds, and flooded roads.
-        * **Step 3 — Voice & AI Assistant:** Click **Listen to Live Voice Briefing** or ask the AI Assistant in **English, Hindi, or Kannada**!
+        * **1. Add & Send Students:** Click the **➕ Add & Send a Student** tab to put any student on a bus and send them straight to school!
+        * **2. Try Fun Scenarios:** Use the **Big Colorful Buttons** on the left sidebar to test rainy days, heavy crowds, or broken buses.
+        * **3. Listen & Ask AI:** Tap **🔊 Listen to Audio Guide** or chat with our friendly AI assistant in English, Hindi, or Kannada!
         """,
-        "speak_btn": "🔊 Listen to Live Voice Briefing (English)",
+        "speak_btn": "🔊 Listen to Audio Guide (English)",
     },
     "हिन्दी (Hindi)": {
-        "title": "रूटलेस (ROUTELESS) // स्मार्ट ग्रामीण छात्र परिवहन",
-        "subtitle": "लाइव छात्र डिस्पैच, रीयल-टाइम भीड़ विश्लेषण और बहुभाषी वॉयस एआई",
-        "guide_title": "👋 त्वरित मार्गदर्शिका (आसान 3-चरणीय परिचय)",
+        "title": "🚌 रूटलेस // छात्र और बच्चों की बस यात्रा खेल",
+        "subtitle": "छात्रों को समय पर स्कूल पहुंचाएं, बस मार्ग देखें और मजे करें!",
+        "guide_title": "🌟 स्वागत है! आसान 3-चरण गाइड देखने के लिए यहाँ क्लिक करें",
         "guide_body": """
-        * **चरण 1 — छात्र जोड़ें और भेजें:** किसी भी छात्र को बस में जोड़ने और सीधे परीक्षा केंद्र भेजने के लिए **➕ Add & Dispatch Student** टैब खोलें।
-        * **चरण 2 — आपात स्थिति जांचें:** बाईं ओर दिए गए बटन दबाकर देखें कि बस खराब होने या बाढ़ आने पर एआई कैसे तुरंत समाधान करता है।
-        * **चरण 3 — आवाज़ और एआई सहायक:** लाइव हिंदी घोषणा सुनें या एआई से अपना प्रश्न पूछें!
+        * **1. छात्र जोड़ें और भेजें:** किसी भी छात्र को बस में बैठाकर सीधे स्कूल भेजने के लिए **➕ Add & Send a Student** टैब खोलें।
+        * **2. मजेदार स्थितियां जांचें:** बाईं तरफ दिए गए चमकीले बटनों से बारिश या बस खराब होने की स्थिति का अभ्यास करें।
+        * **3. सुनें और एआई से पूछें:** **🔊 ऑडियो गाइड सुनें** बटन दबाएं या अपनी भाषा में सवाल पूछें!
         """,
-        "speak_btn": "🔊 लाइव आवाज़ घोषणा सुनें (हिन्दी)",
+        "speak_btn": "🔊 ऑडियो गाइड सुनें (हिन्दी)",
     },
     "ಕನ್ನಡ (Kannada)": {
-        "title": "ರೂಟ್‌ಲೆಸ್ (ROUTELESS) // ಸ್ಮಾರ್ಟ್ ಗ್ರಾಮೀಣ ವಿದ್ಯಾರ್ಥಿ ಸಾರಿಗೆ",
-        "subtitle": "ನೇರ ವಿದ್ಯಾರ್ಥಿ ರವಾನೆ, ಜನಸಂದಣಿ ವಿಶ್ಲೇಷಣೆ ಮತ್ತು ಬಹುಭಾಷಾ ಧ್ವನಿ AI",
-        "guide_title": "👋 ತ್ವರಿತ ಮಾರ್ಗದರ್ಶಿ (ಸರಳ 3-ಹಂತಗಳ ಮಾಹಿತಿ)",
+        "title": "🚌 ರೂಟ್‌ಲೆಸ್ // ವಿದ್ಯಾರ್ಥಿ ಮತ್ತು ಮಕ್ಕಳ ಬಸ್ ಆಟ",
+        "subtitle": "ವಿದ್ಯಾರ್ಥಿಗಳನ್ನು ಸಮಯಕ್ಕೆ ಸರಿಯಾಗಿ ಶಾಲೆಗೆ ತಲುಪಿಸಿ, ಬಸ್ ಮಾರ್ಗಗಳನ್ನು ನೋಡಿ!",
+        "guide_title": "🌟 ಸ್ವಾಗತ! ಸರಳ 3-ಹಂತಗಳ ಮಾರ್ಗದರ್ಶಿಗಾಗಿ ಇಲ್ಲಿ ಕ್ಲಿಕ್ ಮಾಡಿ",
         "guide_body": """
-        * **ಹಂತ 1 — ವಿದ್ಯಾರ್ಥಿಯನ್ನು ಬಸ್‌ಗೆ ಸೇರಿಸಿ:** ವಿದ್ಯಾರ್ಥಿಯನ್ನು ನೋಂದಾಯಿಸಲು ಮತ್ತು ಪರೀಕ್ಷಾ ಕೇಂದ್ರಕ್ಕೆ ಕಳುಹಿಸಲು **➕ Add & Dispatch Student** ಟ್ಯಾಬ್ ತೆರೆಯಿರಿ.
-        * **ಹಂತ 2 — ತುರ್ತು ಪರಿಸ್ಥಿತಿ ಪರೀಕ್ಷಿಸಿ:** ಬಸ್ ಕೆಟ್ಟುಹೋದಾಗ ಅಥವಾ ಪ್ರವಾಹ ಬಂದಾಗ AI ಹೇಗೆ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ ಎಂಬುದನ್ನು ಎಡಭಾಗದ ಬಟನ್‌ಗಳಿಂದ ನೋಡಿ.
-        * **ಹಂತ 3 — ಧ್ವನಿ ಮತ್ತು AI ಸಹಾಯಕ:** ಕನ್ನಡದಲ್ಲಿ ನೇರ ಧ್ವನಿ ಪ್ರಕಟಣೆ ಕೇಳಿ ಅಥವಾ AI ಸಹಾಯಕರನ್ನು ಪ್ರಶ್ನಿಸಿ!
+        * **1. ವಿದ್ಯಾರ್ಥಿಯನ್ನು ಕಳುಹಿಸಿ:** ವಿದ್ಯಾರ್ಥಿಯನ್ನು ಬಸ್‌ಗೆ ಹತ್ತಿಸಿ ನೇರವಾಗಿ ಶಾಲೆಗೆ ಕಳುಹಿಸಲು **➕ Add & Send a Student** ಟ್ಯಾಬ್ ತೆರೆಯಿರಿ.
+        * **2. ಮೋಜಿನ ಪರಿಸ್ಥಿತಿಗಳನ್ನು ಪರೀಕ್ಷಿಸಿ:** ಎಡಭಾಗದಲ್ಲಿರುವ ಬಣ್ಣಬಣ್ಣದ ಬಟನ್‌ಗಳನ್ನು ಬಳಸಿ ಮಳೆ ಅಥವಾ ಬಸ್ ಕೆಟ್ಟುಹೋಗುವ ಸವಾಲುಗಳನ್ನು ನೋಡಿ.
+        * **3. ಧ್ವನಿ ಕೇಳಿ ಮತ್ತು ಪ್ರಶ್ನಿಸಿ:** **🔊 ಆಡಿಯೋ ಮಾರ್ಗದರ್ಶಿ ಕೇಳಿ** ಬಟನ್ ಒತ್ತಿ ಕನ್ನಡದಲ್ಲಿ ಮಾಹಿತಿ ಪಡೆಯಿರಿ!
         """,
-        "speak_btn": "🔊 ನೇರ ಧ್ವನಿ ಪ್ರಕಟಣೆ ಕೇಳಿ (ಕನ್ನಡ)",
+        "speak_btn": "🔊 ಆಡಿಯೋ ಮಾರ್ಗದರ್ಶಿ ಕೇಳಿ (ಕನ್ನಡ)",
     }
 }
 
@@ -307,7 +267,7 @@ def text_to_audio_bytes(text: str, lang_code: str):
         return None
 
 # -----------------------------------------------------------------------------
-# 3. NODES & BASE MANIFEST DATA
+# 3. NODES & BASE DATA
 # -----------------------------------------------------------------------------
 NODES = {
     "Kanakapura Edu Hub (Exam Center)": {"lat": 12.5460, "lon": 77.4190, "type": "HUB"},
@@ -330,7 +290,7 @@ def generate_base_manifest():
         is_exam = np.random.choice([True, False], p=[0.45, 0.55])
         exam_mins = np.random.choice([45, 75, 110, 180]) if is_exam else 360
         dist_km = {"Harohalli Sector": 16.4, "Maralawadi Cluster": 14.8, "Sathanur South": 12.2, "Kodihalli Creek": 9.5, "Uyyamballi Outpost": 15.1}[v]
-        journey_stage = np.random.choice(["Arrived at Exam Hub", "In Transit on Bus", "Waiting at Pickup"], p=[0.35, 0.45, 0.20])
+        journey_stage = np.random.choice(["Arrived at School", "Riding on Bus", "Waiting at Bus Stop"], p=[0.35, 0.45, 0.20])
         records.append({
             "Student_ID": f"RTL-{2026000 + i}",
             "Student_Name": f"{np.random.choice(first_names)} #{i}",
@@ -344,7 +304,7 @@ def generate_base_manifest():
     return pd.DataFrame(records)
 
 # -----------------------------------------------------------------------------
-# 4. SESSION STATE INITIALIZATION
+# 4. SESSION STATE
 # -----------------------------------------------------------------------------
 if "broken_buses" not in st.session_state:
     st.session_state.broken_buses = 2
@@ -360,54 +320,54 @@ if "custom_students" not in st.session_state:
     st.session_state.custom_students = []
 
 # -----------------------------------------------------------------------------
-# 5. SIDEBAR: LANGUAGE, PRESETS & CONTROLS
+# 5. SIDEBAR: SUPER VISIBLE BUTTONS & CONTROLS
 # -----------------------------------------------------------------------------
 with st.sidebar:
-    st.markdown("### 🌐 Language / भाषा / ಭಾಷೆ")
+    st.markdown("### 🌐 Select Language")
     selected_lang = st.selectbox(
-        "Select Preferred Language",
+        "Choose Language / भाषा / ಭಾಷೆ",
         list(LANG_CONFIG.keys()),
         index=0
     )
     lang_code = LANG_CONFIG[selected_lang]["code"]
     strings = UI_STRINGS[selected_lang]
 
-    st.markdown("### ⚡ 1-Click Scenario Presets")
-    p_col1, p_col2 = st.columns(2)
-    with p_col1:
-        if st.button("🚨 Exam Crisis", use_container_width=True):
-            st.session_state.broken_buses = 2
-            st.session_state.demand_surge = 40
-            st.session_state.flood_idx = 1
-            st.session_state.micro_feeders = True
-    with p_col2:
-        if st.button("✅ Normal Day", use_container_width=True):
-            st.session_state.broken_buses = 0
-            st.session_state.demand_surge = 0
-            st.session_state.flood_idx = 0
-            st.session_state.micro_feeders = False
+    st.markdown("### 🎮 Fun Quick Scenarios")
+    st.caption("Click a button to test challenges:")
+    
+    if st.button("🚨 Exam Rush & Rain Challenge", use_container_width=True):
+        st.session_state.broken_buses = 2
+        st.session_state.demand_surge = 40
+        st.session_state.flood_idx = 1
+        st.session_state.micro_feeders = True
+    
+    if st.button("☀️ Perfect Sunny Day", use_container_width=True):
+        st.session_state.broken_buses = 0
+        st.session_state.demand_surge = 0
+        st.session_state.flood_idx = 0
+        st.session_state.micro_feeders = False
 
-    if st.button("🌊 Extreme Flood + 4 Down", use_container_width=True):
+    if st.button("🌊 Super Flood & Heavy Trouble", use_container_width=True):
         st.session_state.broken_buses = 4
         st.session_state.demand_surge = 60
         st.session_state.flood_idx = 2
         st.session_state.micro_feeders = True
 
     st.markdown("---")
-    st.markdown("### 🎛️ Live Network Controls")
-    broken_buses = st.slider("Disabled Government Buses", 0, 4, key="broken_buses")
-    demand_surge_pct = st.slider("Exam Day Demand Surge (%)", 0, 80, step=5, key="demand_surge")
+    st.markdown("### 🎛️ Easy Sliders")
+    broken_buses = st.slider("Broken Buses", 0, 4, key="broken_buses")
+    demand_surge_pct = st.slider("Extra Crowd (%)", 0, 80, step=5, key="demand_surge")
     flood_options = [
-        "None (All Clear)",
-        "Maralawadi ↔ Edu Hub (Bridge Submerged)",
-        "Harohalli ↔ Edu Hub (Landslide)"
+        "None (All Roads Open)",
+        "Maralawadi Bridge Flooded",
+        "Harohalli Landslide"
     ]
     flood_corridor = st.selectbox(
-        "Flooded / Blocked Corridor",
+        "Road Weather Status",
         flood_options,
         index=st.session_state.flood_idx
     )
-    deploy_micro_feeders = st.toggle("Deploy Local Auto/Van Feeders", key="micro_feeders")
+    deploy_micro_feeders = st.toggle("Send Extra Auto-Rickshaws", key="micro_feeders")
 
 # -----------------------------------------------------------------------------
 # 6. SOLVER & DATA PROCESSING
@@ -420,7 +380,7 @@ if demand_surge_pct > 0:
     n_extra = int(len(base_df) * (demand_surge_pct / 100.0))
     surge_sample = base_df.sample(n=n_extra, replace=True, random_state=99).copy()
     surge_sample["Student_ID"] = [f"RTL-SRG-{i:03d}" for i in range(1, n_extra + 1)]
-    surge_sample["Student_Name"] = [f"Surge Student #{i}" for i in range(1, n_extra + 1)]
+    surge_sample["Student_Name"] = [f"Friend #{i}" for i in range(1, n_extra + 1)]
     surge_sample["Exam_Candidate"] = np.random.choice([True, False], size=n_extra, p=[0.65, 0.35])
     surge_sample["Minutes_To_Gate_Close"] = np.where(surge_sample["Exam_Candidate"], np.random.choice([50, 85, 115], size=n_extra), 360)
     df = pd.concat([base_df, surge_sample], ignore_index=True)
@@ -432,7 +392,7 @@ if st.session_state.custom_students:
     df = pd.concat([custom_df, df], ignore_index=True)
 
 affected_village = "Maralawadi Cluster" if "Maralawadi" in flood_corridor else ("Harohalli Sector" if "Harohalli" in flood_corridor else None)
-df["Corridor_Status"] = np.where(df["Origin_Village"] == affected_village, "REROUTED (+18m Bypass)", "NOMINAL")
+df["Corridor_Status"] = np.where(df["Origin_Village"] == affected_village, "SAFE DETOUR (+18m)", "ALL CLEAR")
 
 urgency_score = np.where(df["Exam_Candidate"], np.clip(100 - (df["Minutes_To_Gate_Close"] * 0.45), 45, 95), 15)
 df["Criticality_Index"] = np.round(np.clip(urgency_score + np.where(df["Origin_Village"] == affected_village, 12, 0) + (df["Distance_KM"]/20)*10, 0, 100), 1)
@@ -449,24 +409,24 @@ def assign_transport(idx, row):
     if pd.notna(row["Manual_Bus_Override"]):
         return row["Manual_Bus_Override"]
     if idx < primary_seat_pool:
-        return f"GOV-BUS-0{(idx // bus_capacity) + 1}"
+        return f"BUS-0{(idx // bus_capacity) + 1}"
     elif idx < (primary_seat_pool + feeder_seat_pool):
-        return f"FEEDER-AUTO-{(idx - primary_seat_pool) // 6 + 1:02d}"
+        return f"AUTO-0{(idx - primary_seat_pool) // 6 + 1}"
     else:
-        return "DEFERRED / WAVE-2 STANDBY"
+        return "NEXT BUS (WAVE 2)"
 
 df["Assigned_Unit"] = [assign_transport(i, r) for i, r in df.iterrows()]
 
 total_students = len(df)
 exam_students = df[df["Exam_Candidate"]]
 total_exam_students = len(exam_students)
-rescued_exam_students = len(exam_students[~exam_students["Assigned_Unit"].str.contains("DEFERRED")])
+rescued_exam_students = len(exam_students[~exam_students["Assigned_Unit"].str.contains("WAVE 2")])
 exam_rescue_rate = (rescued_exam_students / total_exam_students * 100) if total_exam_students > 0 else 100.0
-total_seated = len(df[~df["Assigned_Unit"].str.contains("DEFERRED")])
+total_seated = len(df[~df["Assigned_Unit"].str.contains("WAVE 2")])
 unseated_count = total_students - total_seated
 
 # -----------------------------------------------------------------------------
-# 7. HEADER, GUIDE & VOICE BRIEFING
+# 7. HEADER & AUDIO GUIDE
 # -----------------------------------------------------------------------------
 is_crisis = (broken_buses > 0) or (demand_surge_pct >= 25) or (affected_village is not None)
 st.markdown(f"""
@@ -475,11 +435,11 @@ st.markdown(f"""
         <div class="command-title">{strings['title']}</div>
         <div class="command-subtitle">{strings['subtitle']}</div>
     </div>
-    <div class="status-badge {'status-crisis' if is_crisis else 'status-normal'}">{'🚨 Active Crisis Response' if is_crisis else '✅ Smooth Operations'}</div>
+    <div class="status-badge">{'⚡ Challenge Active!' : '🌟 All Safe & Happy!'}</div>
 </div>
 """, unsafe_allow_html=True)
 
-col_guide, col_voice = st.columns([1.85, 1.15])
+col_guide, col_voice = st.columns([1.8, 1.2])
 with col_guide:
     with st.expander(strings["guide_title"], expanded=True):
         st.markdown(strings["guide_body"])
@@ -488,11 +448,11 @@ with col_voice:
     st.markdown("<div style='height: 6px;'></div>", unsafe_allow_html=True)
     if st.button(strings["speak_btn"], use_container_width=True):
         if lang_code == "hi":
-            briefing = f"रूटलेस लाइव अपडेट। कुल {total_students} छात्रों में से {rescued_exam_students} परीक्षा छात्रों को बस सीट मिल गई है। {active_buses} सरकारी बसें और {feeder_units} ऑटो रिक्शा छात्रों को परीक्षा केंद्र ले जा रहे हैं।"
+            briefing = f"नमस्ते! कुल {total_students} छात्रों में से {rescued_exam_students} छात्रों को बस में सीट मिल गई है। {active_buses} बसें बच्चों को स्कूल ले जा रही हैं।"
         elif lang_code == "kn":
-            briefing = f"ರೂಟ್‌ಲೆಸ್ ನೇರ ಮಾಹಿತಿ. ಒಟ್ಟು {total_students} ವಿದ್ಯಾರ್ಥಿಗಳಲ್ಲಿ {rescued_exam_students} ಪರೀಕ್ಷಾ ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ ಸೀಟು ಖಚಿತವಾಗಿದೆ. {active_buses} ಸರ್ಕಾರಿ ಬಸ್‌ಗಳು ಮತ್ತು {feeder_units} ಆಟೋ ರಿಕ್ಷಾಗಳು ವಿದ್ಯಾರ್ಥಿಗಳನ್ನು ಪರೀಕ್ಷಾ ಕೇಂದ್ರಕ್ಕೆ ಕರೆದೊಯ್ಯುತ್ತಿವೆ."
+            briefing = f"ನಮಸ್ಕಾರ! ಒಟ್ಟು {total_students} ವಿದ್ಯಾರ್ಥಿಗಳಲ್ಲಿ {rescued_exam_students} ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ ಬಸ್ ಸೀಟ್ ಸಿಕ್ಕಿದೆ. {active_buses} ಬಸ್‌ಗಳು ಮಕ್ಕಳನ್ನು ಶಾಲೆಗೆ ಕರೆದೊಯ್ಯುತ್ತಿವೆ."
         else:
-            briefing = f"Routeless Live Dispatch Briefing. {rescued_exam_students} out of {total_exam_students} exam students have confirmed seats, achieving {exam_rescue_rate:.0f} percent exam coverage. {active_buses} Express Buses and {feeder_units} Feeder Autos are actively transporting students."
+            briefing = f"Hello! Out of {total_students} total students, {rescued_exam_students} exam students have secured bus seats. {active_buses} buses and auto-rickshaws are actively transporting everyone safely to school!"
         audio_data = text_to_audio_bytes(briefing, lang_code)
         if audio_data:
             st.audio(audio_data, format="audio/mp3", autoplay=True)
@@ -500,82 +460,82 @@ with col_voice:
             st.info(briefing)
 
 # -----------------------------------------------------------------------------
-# 8. ANIMATED KPI CARDS
+# 8. BIG CLICKABLE KPI CARDS
 # -----------------------------------------------------------------------------
 c1, c2, c3, c4 = st.columns(4)
 with c1:
     st.markdown(f'''
     <div class="kpi-card kpi-emerald">
-        <div class="kpi-label">🎓 Exam Coverage</div>
-        <div class="kpi-value">{exam_rescue_rate:.1f}%</div>
-        <div class="kpi-trend">✅ {rescued_exam_students} / {total_exam_students} Secured</div>
+        <div class="kpi-label">🌟 Happy Students</div>
+        <div class="kpi-value">{exam_rescue_rate:.0f}%</div>
+        <div class="kpi-trend">✅ {rescued_exam_students} Got School Seats</div>
     </div>
     ''', unsafe_allow_html=True)
 with c2:
     st.markdown(f'''
     <div class="kpi-card kpi-sky">
-        <div class="kpi-label">🚌 Active Fleet</div>
-        <div class="kpi-value">{total_seated} <span style="font-size:1.2rem;color:#334155;">/ {total_students}</span></div>
-        <div class="kpi-trend">⚡ {active_buses} Buses + {feeder_units} Autos</div>
+        <div class="kpi-label">🚌 Active Buses</div>
+        <div class="kpi-value">{active_buses + feeder_units}</div>
+        <div class="kpi-trend">⚡ Running on Roads Now</div>
     </div>
     ''', unsafe_allow_html=True)
 with c3:
     st.markdown(f'''
     <div class="kpi-card kpi-amber">
-        <div class="kpi-label">📈 Crowd Surge</div>
+        <div class="kpi-label">⚠️ Extra Crowd</div>
         <div class="kpi-value">+{demand_surge_pct}%</div>
-        <div class="kpi-trend">⚠️ {broken_buses} Buses Under Repair</div>
+        <div class="kpi-trend">👥 More Friends Joined Today</div>
     </div>
     ''', unsafe_allow_html=True)
 with c4:
     st.markdown(f'''
     <div class="kpi-card kpi-indigo">
-        <div class="kpi-label">🛡️ Exam Stranded</div>
-        <div class="kpi-value">{max(0, total_exam_students - rescued_exam_students)}</div>
-        <div class="kpi-trend">🕒 {unseated_count} in Wave-2</div>
+        <div class="kpi-label">🛡️ Safe & Sound</div>
+        <div class="kpi-value">{total_seated}</div>
+        <div class="kpi-trend">🎉 Ready for Class!</div>
     </div>
     ''', unsafe_allow_html=True)
 
 st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# 9. ANIMATED TABS & WORKSPACES
+# 9. BIG COLORFUL TABS
 # -----------------------------------------------------------------------------
 tab_add, tab_people, tab_ai, tab_sim, tab_manifest = st.tabs([
-    "➕ Add & Dispatch Student",
-    "📊 Real-Time People Analytics",
-    "🤖 Multilingual AI Assistant",
-    "🎮 Live Route Simulator",
-    "📋 Full Student Manifest"
+    "➕ Add & Send a Student",
+    "📊 Live People & Crowd Watch",
+    "🤖 Friendly AI Voice Helper",
+    "🎮 Interactive Bus Game Map",
+    "📋 All Students List"
 ])
 
 with tab_add:
-    st.markdown("#### 🚌 Register Student & Direct Dispatch to Kanakapura Exam Center")
-    st.markdown("Assign any student directly onto an active vehicle and generate their priority boarding pass instantly.")
+    st.markdown("#### 🚌 Board a Student onto a Bus & Send Them to School!")
+    st.markdown("Type any student's name, pick their bus, and click the big button to send them off on their journey!")
 
     form_col, feed_col = st.columns([1.3, 1.2])
 
     with form_col:
         with st.form("dispatch_student_form", clear_on_submit=True):
-            s_name = st.text_input("Student Full Name", placeholder="e.g., Priya Sharma")
+            s_name = st.text_input("Student's Friendly Name", placeholder="e.g., Rahul / Sneha")
             c_sub1, c_sub2 = st.columns(2)
             with c_sub1:
-                s_village = st.selectbox("Pickup Village", [k for k, v in NODES.items() if v["type"] == "VILLAGE"])
+                s_village = st.selectbox("Village Stop", [k for k, v in NODES.items() if v["type"] == "VILLAGE"])
             with c_sub2:
-                available_bus_list = [f"GOV-BUS-0{i}" for i in range(1, active_buses + 1)] + [f"FEEDER-AUTO-0{i}" for i in range(1, 6)]
-                s_bus = st.selectbox("Assign Vehicle", available_bus_list)
+                available_bus_list = [f"BUS-0{i}" for i in range(1, active_buses + 1)] + [f"AUTO-0{i}" for i in range(1, 6)]
+                s_bus = st.selectbox("Pick Bus or Auto", available_bus_list)
 
             c_sub3, c_sub4 = st.columns(2)
             with c_sub3:
-                s_exam = st.checkbox("Appearing for Exam Today", value=True)
+                s_exam = st.checkbox("Important Test Today?", value=True)
             with c_sub4:
-                s_mins = st.number_input("Minutes to Gate Close", min_value=15, max_value=240, value=60, step=15)
+                s_mins = st.number_input("Minutes Until Test", min_value=15, max_value=240, value=60, step=15)
 
-            submitted = st.form_submit_button("🚀 Dispatch to Exam Center", use_container_width=True)
+            submitted = st.form_submit_button("🚀 Send Student to School!", use_container_width=True)
 
             if submitted:
-                clean_name = s_name.strip() if s_name.strip() else f"Walk-In Student #{len(st.session_state.custom_students) + 1}"
-                new_id = f"RTL-VIP-{101 + len(st.session_state.custom_students)}"
+                clean_name = s_name.strip() if s_name.strip() else f"Student #{len(st.session_state.custom_students) + 1}"
+                new_id = f"VIP-{101 + len(st.session_state.custom_students)}"
                 dist_map = {"Harohalli Sector": 16.4, "Maralawadi Cluster": 14.8, "Sathanur South": 12.2, "Kodihalli Creek": 9.5, "Uyyamballi Outpost": 15.1}
                 
                 new_record = {
@@ -585,85 +545,85 @@ with tab_add:
                     "Exam_Candidate": s_exam,
                     "Minutes_To_Gate_Close": int(s_mins),
                     "Distance_KM": dist_map.get(s_village, 12.0),
-                    "Journey_Status": "Dispatched to Exam Hub",
+                    "Journey_Status": "Traveling to School",
                     "Manual_Bus_Override": s_bus
                 }
                 st.session_state.custom_students.insert(0, new_record)
-                st.success(f"✅ **{clean_name} ({new_id})** assigned to **{s_bus}** from **{s_village}** and dispatched!")
+                st.success(f"🎉 Hooray! **{clean_name}** boarded **{s_bus}** from **{s_village}** and is on their way to school!")
                 
-                confirm_voice = f"Confirmed! Student {clean_name} has been assigned to {s_bus} and dispatched."
+                confirm_voice = f"Hooray! Student {clean_name} is successfully on board {s_bus} heading to school."
                 audio_confirm = text_to_audio_bytes(confirm_voice, lang_code)
                 if audio_confirm:
                     st.audio(audio_confirm, format="audio/mp3", autoplay=True)
 
     with feed_col:
-        st.markdown("#### 🎫 Live Priority Boarding Passes")
+        st.markdown("#### 🎫 Recently Dispatched Tickets")
         if st.session_state.custom_students:
             for stu in st.session_state.custom_students[:4]:
                 st.markdown(f"""
-                <div class="protocol-box" style="border-left-color: #059669; background: #ECFDF5;">
-                    <div class="protocol-title">🎫 {stu['Student_Name']} ({stu['Student_ID']})</div>
+                <div class="protocol-box" style="border-left-color: #10B981; background: #ECFDF5;">
+                    <div class="protocol-title">🎫 Ticket for {stu['Student_Name']}</div>
                     <div class="protocol-desc">
-                        • <b>Vehicle:</b> {stu['Manual_Bus_Override']}<br>
-                        • <b>Route:</b> {stu['Origin_Village']} ➔ Exam Hub<br>
-                        • <b>Status:</b> 🟢 {stu['Journey_Status']}
+                        • <b>Bus Assigned:</b> {stu['Manual_Bus_Override']}<br>
+                        • <b>Route:</b> {stu['Origin_Village']} ➔ School Hub<br>
+                        • <b>Status:</b> 🌟 {stu['Journey_Status']}
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
         else:
             st.markdown("""
-            <div class="protocol-box" style="border-left-color: #0284C7; background: #F0F9FF;">
-                <div class="protocol-title">No Dispatches Yet</div>
-                <div class="protocol-desc">Use the form on the left to board students onto buses and generate priority boarding passes.</div>
+            <div class="protocol-box" style="border-left-color: #3B82F6; background: #EFF6FF;">
+                <div class="protocol-title">Ready for Your First Dispatch!</div>
+                <div class="protocol-desc">Use the form on the left to send students to school and collect their special boarding tickets!</div>
             </div>
             """, unsafe_allow_html=True)
 
 with tab_people:
-    st.markdown("#### 📊 Real-Time Passenger Flow & Crowd Telemetry")
-    arrived_cnt = int((df["Journey_Status"] == "Arrived at Exam Hub").sum())
-    transit_cnt = int((df["Journey_Status"].isin(["In Transit on Bus", "Dispatched to Exam Hub"])).sum())
-    waiting_cnt = int((df["Journey_Status"] == "Waiting at Pickup").sum())
+    st.markdown("#### 📊 Real-Time People & Crowd Watch")
+    arrived_cnt = int((df["Journey_Status"] == "Arrived at School").sum())
+    transit_cnt = int((df["Journey_Status"].isin(["Riding on Bus", "Traveling to School"])).sum())
+    waiting_cnt = int((df["Journey_Status"] == "Waiting at Bus Stop").sum())
 
     p1, p2, p3 = st.columns(3)
     with p1:
-        st.markdown(f'<div class="kpi-card kpi-emerald"><div class="kpi-label">🏫 Arrived at Exam Hub</div><div class="kpi-value">{arrived_cnt} People</div><div class="kpi-trend">Checked in at gates</div></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="kpi-card kpi-emerald"><div class="kpi-label">🏫 Safely at School</div><div class="kpi-value">{arrived_cnt}</div><div class="kpi-trend">Ready to learn</div></div>', unsafe_allow_html=True)
     with p2:
-        st.markdown(f'<div class="kpi-card kpi-sky"><div class="kpi-label">🚌 In-Transit</div><div class="kpi-value">{transit_cnt} People</div><div class="kpi-trend">En route on buses & autos</div></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="kpi-card kpi-sky"><div class="kpi-label">🚌 On the Bus</div><div class="kpi-value">{transit_cnt}</div><div class="kpi-trend">Rriding happily</div></div>', unsafe_allow_html=True)
     with p3:
-        st.markdown(f'<div class="kpi-card kpi-amber"><div class="kpi-label">🚏 Waiting at Stops</div><div class="kpi-value">{waiting_cnt} People</div><div class="kpi-trend">Next pickup soon</div></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="kpi-card kpi-amber"><div class="kpi-label">🚏 Waiting at Stop</div><div class="kpi-value">{waiting_cnt}</div><div class="kpi-trend">Bus arriving soon</div></div>', unsafe_allow_html=True)
 
     st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
 
     g1, g2 = st.columns(2)
     with g1:
         village_summary = df.groupby(["Origin_Village", "Exam_Candidate"]).size().reset_index(name="People")
-        village_summary["Category"] = np.where(village_summary["Exam_Candidate"], "Exam Candidates (Priority 1)", "Regular Students (Priority 2)")
+        village_summary["Category"] = np.where(village_summary["Exam_Candidate"], "Test Students (Priority)", "Regular Students")
         fig1 = px.bar(
             village_summary, x="Origin_Village", y="People", color="Category",
-            title="Real-Time Student Crowd by Village",
-            color_discrete_map={"Exam Candidates (Priority 1)": "#4F46E5", "Regular Students (Priority 2)": "#38BDF8"},
+            title="Students Waiting in Each Village",
+            color_discrete_map={"Test Students (Priority)": "#6366F1", "Regular Students": "#06B6D4"},
             barmode="group"
         )
-        fig1.update_traces(marker_line_color="#0F172A", marker_line_width=1.5)
+        fig1.update_traces(marker_line_color="#0F172A", marker_line_width=2)
         fig1.update_layout(
             paper_bgcolor="#FFFFFF", plot_bgcolor="#F8FAFC",
             font=dict(color="#0F172A", family="Plus Jakarta Sans"),
             margin=dict(l=20, r=20, t=45, b=20),
             xaxis=dict(linecolor="#0F172A", linewidth=2, mirror=True, title=""),
-            yaxis=dict(linecolor="#0F172A", linewidth=2, mirror=True, gridcolor="#E2E8F0", title="Number of People")
+            yaxis=dict(linecolor="#0F172A", linewidth=2, mirror=True, gridcolor="#CBD5E1", title="Number of Students")
         )
         st.plotly_chart(fig1, use_container_width=True)
 
     with g2:
         mode_counts = df["Assigned_Unit"].apply(
-            lambda x: "Gov Express Bus" if "GOV-BUS" in x else ("Micro-Feeder Auto" if "FEEDER" in x else "Wave-2 Standby")
+            lambda x: "Gov Bus" if "BUS" in x else ("Auto Rickshaw" if "AUTO" in x else "Wave 2")
         ).value_counts()
         fig2 = px.pie(
             names=mode_counts.index, values=mode_counts.values, hole=0.52,
-            title="Live Transport Mode Allocation",
-            color_discrete_sequence=["#059669", "#0284C7", "#F59E0B"]
+            title="How Students are Traveling",
+            color_discrete_sequence=["#10B981", "#3B82F6", "#F59E0B"]
         )
-        fig2.update_traces(marker=dict(line=dict(color="#0F172A", width=2)), textinfo="percent+label")
+        fig2.update_traces(marker=dict(line=dict(color="#0F172A", width=2.5)), textinfo="percent+label")
         fig2.update_layout(
             paper_bgcolor="#FFFFFF", plot_bgcolor="#FFFFFF",
             font=dict(color="#0F172A", family="Plus Jakarta Sans"),
@@ -672,20 +632,20 @@ with tab_people:
         st.plotly_chart(fig2, use_container_width=True)
 
 with tab_ai:
-    st.markdown("#### 💬 Routeless Multilingual AI Assistant")
-    st.markdown("Ask questions or check individual student IDs.")
+    st.markdown("#### 🤖 Friendly AI Voice Helper")
+    st.markdown("Ask anything! Click a quick question or type below:")
 
     q1, q2, q3 = st.columns(3)
     quick_prompt = None
     with q1:
-        if st.button("🎓 Exam seat coverage status?", use_container_width=True):
-            quick_prompt = "Exam seat coverage status?"
+        if st.button("🎓 Are all test students seated?", use_container_width=True):
+            quick_prompt = "Are all test students seated?"
     with q2:
-        if st.button("🌊 Road flood & detour status?", use_container_width=True):
-            quick_prompt = "Road flood & detour status?"
+        if st.button("🌊 Are roads safe today?", use_container_width=True):
+            quick_prompt = "Are roads safe today?"
     with q3:
-        if st.button("🔍 Check Student RTL-2026005", use_container_width=True):
-            quick_prompt = "Check Student RTL-2026005"
+        if st.button("🔍 Check Friend #1", use_container_width=True):
+            quick_prompt = "Check Friend #1"
 
     user_query = st.chat_input("Type your question here...")
     active_query = quick_prompt or user_query
@@ -703,24 +663,23 @@ with tab_ai:
             sname = matched_student["Student_Name"]
             village = matched_student["Origin_Village"]
             unit = matched_student["Assigned_Unit"]
-            route = matched_student["Corridor_Status"]
-            return f"Student **{sname} ({sid})** from **{village}** is confirmed on **{unit}**. Corridor Status: **{route}**."
+            return f"**{sname} ({sid})** from **{village}** is riding safely on **{unit}**! 🎉"
 
-        if any(w in q_lower for w in ["flood", "road", "blocked", "detour"]):
+        if any(w in q_lower for w in ["flood", "road", "safe", "weather"]):
             if affected_village:
-                return f"**Flood Detour Active:** The main road from **{affected_village}** is blocked by flooding. Buses are rerouted via **Kodihalli Creek Bypass (+18 mins)**."
+                return f"⚠️ **Weather Alert:** The direct road from **{affected_village}** has water, so our friendly buses are taking the safe **Bypass Route**!"
             else:
-                return "**All Roads Clear:** No flooding or road blockages are active right now."
+                return "☀️ **Great News:** All roads are completely clear and safe for travel today!"
 
         return (
-            f"**Live Fleet Report:** **{rescued_exam_students} out of {total_exam_students}** exam candidates (**{exam_rescue_rate:.1f}%**) have confirmed transport. "
-            f"Active fleet: **{active_buses} Express Buses** and **{feeder_units} Feeder Autos**."
+            f"🌟 **Status Update:** **{rescued_exam_students} out of {total_exam_students}** test students (**{exam_rescue_rate:.0f}%**) have secured comfortable seats. "
+            f"We have **{active_buses} buses** and auto-rickshaws running smoothly!"
         )
 
     if active_query:
         st.session_state.chat_history.append({"role": "user", "content": active_query})
         reply = generate_ai_response(active_query, lang_code)
-        audio_reply = text_to_audio_bytes(reply.replace("**", ""), lang_code)
+        audio_reply = text_to_audio_bytes(reply.replace("**", "").replace("🌟", "").replace("🎉", ""), lang_code)
         st.session_state.chat_history.append({"role": "assistant", "content": reply, "audio": audio_reply})
 
     for msg in st.session_state.chat_history[-6:]:
@@ -730,19 +689,19 @@ with tab_ai:
                 st.audio(msg["audio"], format="audio/mp3")
 
 with tab_sim:
-    st.markdown("#### 🎮 Interactive Real-Time Fleet Movement Simulator")
+    st.markdown("#### 🎮 Interactive Bus Game Map")
     sim_col1, sim_col2 = st.columns([1, 2.4])
     with sim_col1:
-        sim_step = st.slider("Journey Progress (Minutes)", 0, 60, 30, step=5)
-        run_anim = st.button("▶️ Play Live Bus Animation", use_container_width=True)
+        sim_step = st.slider("Trip Progress (Minutes)", 0, 60, 30, step=5)
+        run_anim = st.button("▶️ Play Bus Journey Animation", use_container_width=True)
         st.markdown(f"""
-        <div class="protocol-box" style="border-left-color: #0284C7; background: #F0F9FF;">
-            <div class="protocol-title">⏱️ T + {sim_step} Mins Status</div>
+        <div class="protocol-box" style="border-left-color: #3B82F6; background: #EFF6FF;">
+            <div class="protocol-title">⏱️ Minute {sim_step} Update</div>
             <div class="protocol-desc">
-            • <b>Buses Active:</b> {active_buses} Express Units<br>
-            • <b>Feeders Active:</b> {feeder_units} Auto-Rickshaws<br>
-            • <b>Route Mode:</b> {'Detour Active (' + affected_village + ')' if affected_village else 'Direct Corridors'}<br>
-            • <b>Trip Completion:</b> {min(100, int((sim_step / 55) * 100))}%
+            • <b>Buses Rolling:</b> {active_buses} Units<br>
+            • <b>Auto Shuttles:</b> {feeder_units} Active<br>
+            • <b>Route Status:</b> {'Safe Detour Active' if affected_village else 'Direct Path'}<br>
+            • <b>Trip Progress:</b> {min(100, int((sim_step / 55) * 100))}%
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -762,15 +721,15 @@ with tab_sim:
                 if is_flooded:
                     fig_sim.add_trace(go.Scatter(
                         x=[coords["lon"], hub["lon"]], y=[coords["lat"], hub["lat"]],
-                        mode="lines", line=dict(color="#E11D48", width=3, dash="dash"),
-                        name="Blocked Road"
+                        mode="lines", line=dict(color="#EF4444", width=3, dash="dash"),
+                        name="Closed Road"
                     ))
                     wp = NODES["Kodihalli Creek"]
                     fig_sim.add_trace(go.Scatter(
                         x=[coords["lon"], wp["lon"], hub["lon"]],
                         y=[coords["lat"], wp["lat"], hub["lat"]],
-                        mode="lines", line=dict(color="#D97706", width=4),
-                        name="Safe Bypass"
+                        mode="lines", line=dict(color="#F59E0B", width=4.5),
+                        name="Safe Detour"
                     ))
                     if progress < 0.5:
                         p2 = progress * 2
@@ -784,15 +743,15 @@ with tab_sim:
                     fig_sim.add_trace(go.Scatter(
                         x=[coords["lon"], hub["lon"]], y=[coords["lat"], hub["lat"]],
                         mode="lines", line=dict(color="#4F46E5", width=3.5),
-                        name="Active Corridor"
+                        name="Bus Route"
                     ))
                     vx = coords["lon"] + (hub["lon"] - coords["lon"]) * progress
                     vy = coords["lat"] + (hub["lat"] - coords["lat"]) * progress
 
                 fig_sim.add_trace(go.Scatter(
                     x=[vx], y=[vy], mode="markers+text",
-                    text=["🚌"], textfont=dict(size=20),
-                    marker=dict(size=14, color="#10B981", line=dict(width=2, color="#0F172A")),
+                    text=["🚌"], textfont=dict(size=22),
+                    marker=dict(size=16, color="#10B981", line=dict(width=2.5, color="#0F172A")),
                     showlegend=False
                 ))
 
@@ -800,19 +759,19 @@ with tab_sim:
             fig_sim.add_trace(go.Scatter(
                 x=node_df["Lon"], y=node_df["Lat"], mode="markers+text",
                 text=node_df["Name"], textposition="top center",
-                textfont=dict(family="Plus Jakarta Sans", size=12, color="#0F172A"),
-                marker=dict(size=16, color="#0F172A"),
-                name="Hubs & Villages"
+                textfont=dict(family="Fredoka", size=13, color="#0F172A"),
+                marker=dict(size=18, color="#0F172A", line=dict(width=2, color="#FFFFFF")),
+                name="Villages & School"
             ))
 
             fig_sim.update_layout(
-                title=f"Live Fleet Map at T + {minute_mark} Minutes",
+                title=f"Bus Simulation at Minute {minute_mark}",
                 paper_bgcolor="#FFFFFF", plot_bgcolor="#F8FAFC",
                 font=dict(color="#0F172A", family="Plus Jakarta Sans"),
                 height=420, margin=dict(l=15, r=15, t=40, b=15),
                 showlegend=False,
-                xaxis=dict(showgrid=True, gridcolor="#CBD5E1", linecolor="#0F172A", linewidth=2, mirror=True),
-                yaxis=dict(showgrid=True, gridcolor="#CBD5E1", linecolor="#0F172A", linewidth=2, mirror=True)
+                xaxis=dict(showgrid=True, gridcolor="#CBD5E1", linecolor="#0F172A", linewidth=2.5, mirror=True),
+                yaxis=dict(showgrid=True, gridcolor="#CBD5E1", linecolor="#0F172A", linewidth=2.5, mirror=True)
             )
             sim_placeholder.plotly_chart(fig_sim, use_container_width=True)
 
@@ -825,13 +784,13 @@ with tab_sim:
 
 with tab_manifest:
     f1, f2, f3 = st.columns([1.5, 1.5, 2])
-    with f1: filter_exam = st.selectbox("Filter Student Group", ["All Students", "Exam Candidates Only", "Regular Commuters"])
-    with f2: filter_village = st.selectbox("Origin Village", ["All Villages"] + list(df["Origin_Village"].unique()))
-    with f3: search_id = st.text_input("Search Name or ID", placeholder="e.g., Priya or RTL-2026004")
+    with f1: filter_exam = st.selectbox("Show Students", ["All Students", "Test Candidates", "Regular Students"])
+    with f2: filter_village = st.selectbox("Village", ["All Villages"] + list(df["Origin_Village"].unique()))
+    with f3: search_id = st.text_input("Search Name", placeholder="e.g., Rohan")
 
     filtered_df = df.copy()
-    if filter_exam == "Exam Candidates Only": filtered_df = filtered_df[filtered_df["Exam_Candidate"]]
-    elif filter_exam == "Regular Commuters": filtered_df = filtered_df[~filtered_df["Exam_Candidate"]]
+    if filter_exam == "Test Candidates": filtered_df = filtered_df[filtered_df["Exam_Candidate"]]
+    elif filter_exam == "Regular Students": filtered_df = filtered_df[~filtered_df["Exam_Candidate"]]
     if filter_village != "All Villages": filtered_df = filtered_df[filtered_df["Origin_Village"] == filter_village]
     if search_id:
         filtered_df = filtered_df[
@@ -843,7 +802,7 @@ with tab_manifest:
         filtered_df[["Student_ID", "Student_Name", "Origin_Village", "Exam_Candidate", "Journey_Status", "Criticality_Index", "Assigned_Unit"]],
         use_container_width=True, height=430,
         column_config={
-            "Criticality_Index": st.column_config.ProgressColumn("Priority Score", format="%.1f", min_value=0, max_value=100),
-            "Exam_Candidate": st.column_config.CheckboxColumn("Exam Today")
+            "Criticality_Index": st.column_config.ProgressColumn("Priority", format="%.1f", min_value=0, max_value=100),
+            "Exam_Candidate": st.column_config.CheckboxColumn("Test Today")
         }
     )
