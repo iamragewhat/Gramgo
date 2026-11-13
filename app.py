@@ -409,4 +409,406 @@ def assign_transport(idx):
     if idx < primary_seat_pool:
         return f"GOV-BUS-0{(idx // bus_capacity) + 1}"
     elif idx < (primary_seat_pool + feeder_seat_pool):
-        return f"FEEDER-AUTO-{(idx - primary_seat_pool) // 6 + 1:0
+        return f"FEEDER-AUTO-{(idx - primary_seat_pool) // 6 + 1:02d}"
+    else:
+        return "DEFERRED / WAVE-2 STANDBY"
+
+df["Assigned_Unit"] = [assign_transport(i) for i in range(len(df))]
+
+total_students = len(df)
+exam_students = df[df["Exam_Candidate"]]
+total_exam_students = len(exam_students)
+rescued_exam_students = len(exam_students[~exam_students["Assigned_Unit"].str.contains("DEFERRED")])
+exam_rescue_rate = (rescued_exam_students / total_exam_students * 100) if total_exam_students > 0 else 100.0
+total_seated = len(df[~df["Assigned_Unit"].str.contains("DEFERRED")])
+unseated_count = total_students - total_seated
+
+# -----------------------------------------------------------------------------
+# 7. HEADER, BEGINNER GUIDE & MULTILINGUAL VOICE BRIEFING
+# -----------------------------------------------------------------------------
+is_crisis = (broken_buses > 0) or (demand_surge_pct >= 25) or (affected_village is not None)
+st.markdown(f"""
+<div class="command-header">
+    <div>
+        <div class="command-title">{strings['title']}</div>
+        <div class="command-subtitle">{strings['subtitle']}</div>
+    </div>
+    <div class="status-badge {'status-crisis' if is_crisis else 'status-normal'}">{'● Active Crisis Protocol' if is_crisis else '● Normal Operations'}</div>
+</div>
+""", unsafe_allow_html=True)
+
+col_guide, col_voice = st.columns([1.8, 1.2])
+with col_guide:
+    with st.expander(strings["guide_title"], expanded=False):
+        st.markdown(strings["guide_body"])
+
+with col_voice:
+    if st.button(strings["speak_btn"], use_container_width=True):
+        if lang_code == "hi":
+            briefing = (
+                f"रूटलेस आपातकालीन सूचना। कुल {total_students} छात्रों में से {rescued_exam_students} परीक्षा छात्रों को सीट मिल गई है। "
+                f"{broken_buses} सरकारी बसें खराब हैं, इसलिए {active_buses} बसें और {feeder_units} ऑटो रिक्शा चलाए जा रहे हैं। "
+                f"{'सावधान: ' + affected_village + ' मार्ग पर बाढ़ के कारण बसों को कोडिहल्ली वैकल्पिक मार्ग से भेजा गया है।' if affected_village else 'सभी मुख्य सड़कें सुरक्षित हैं।'}"
+            )
+        elif lang_code == "kn":
+            briefing = (
+                f"ರೂಟ್‌ಲೆಸ್ ತುರ್ತು ಪ್ರಕಟಣೆ. ಒಟ್ಟು {total_students} ವಿದ್ಯಾರ್ಥಿಗಳಲ್ಲಿ {rescued_exam_students} ಪರೀಕ್ಷಾ ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ ಸೀಟು ಖಚಿತವಾಗಿದೆ. "
+                f"{broken_buses} ಸರ್ಕಾರಿ ಬಸ್‌ಗಳು ಕೆಟ್ಟುಹೋಗಿರುವುದರಿಂದ, {active_buses} ಬಸ್‌ಗಳು ಮತ್ತು {feeder_units} ಆಟೋ ರಿಕ್ಷಾಗಳನ್ನು ನಿಯೋಜಿಸಲಾಗಿದೆ. "
+                f"{'ಎಚ್ಚರಿಕೆ: ' + affected_village + ' ರಸ್ತೆಯಲ್ಲಿ ಪ್ರವಾಹವಿರುವುದರಿಂದ ಬಸ್‌ಗಳನ್ನು ಕೋಡಿಹಳ್ಳಿ ಪರ್ಯಾಯ ಮಾರ್ಗದಲ್ಲಿ ಕಳುಹಿಸಲಾಗಿದೆ.' if affected_village else 'ಎಲ್ಲಾ ಮುಖ್ಯ ರಸ್ತೆಗಳು ಸುರಕ್ಷಿತವಾಗಿವೆ.'}"
+            )
+        else:
+            briefing = (
+                f"Routeless Live Dispatch Briefing. Out of {total_students} total students, {rescued_exam_students} out of {total_exam_students} exam candidates have secured seats, achieving {exam_rescue_rate:.0f} percent exam coverage. "
+                f"With {broken_buses} government buses offline, {active_buses} express buses and {feeder_units} local feeder autos are active. "
+                f"{'Alert: ' + affected_village + ' road is flooded; buses are rerouted via Kodihalli bypass.' if affected_village else 'All arterial roads are clear.'}"
+            )
+        audio_data = text_to_audio_bytes(briefing, lang_code)
+        if audio_data:
+            st.audio(audio_data, format="audio/mp3", autoplay=True)
+        else:
+            st.info(briefing)
+
+# -----------------------------------------------------------------------------
+# 8. KPI CARDS
+# -----------------------------------------------------------------------------
+c1, c2, c3, c4 = st.columns(4)
+with c1:
+    st.markdown(f'''
+    <div class="kpi-card">
+        <div class="kpi-label">Exam Candidate Coverage</div>
+        <div class="kpi-value">{exam_rescue_rate:.1f}%</div>
+        <div class="kpi-trend trend-good">✓ {rescued_exam_students} / {total_exam_students} Examinees Secured</div>
+    </div>
+    ''', unsafe_allow_html=True)
+with c2:
+    st.markdown(f'''
+    <div class="kpi-card">
+        <div class="kpi-label">Active Fleet Capacity</div>
+        <div class="kpi-value">{total_seated} <span style="font-size:1.15rem;color:#475569;">/ {total_students}</span></div>
+        <div class="kpi-trend trend-warn">⚡ {active_buses} Buses + {feeder_units} Feeders</div>
+    </div>
+    ''', unsafe_allow_html=True)
+with c3:
+    st.markdown(f'''
+    <div class="kpi-card">
+        <div class="kpi-label">Demand Surge Load</div>
+        <div class="kpi-value">+{demand_surge_pct}%</div>
+        <div class="kpi-trend trend-bad">⚠ {broken_buses} Gov Buses Offline</div>
+    </div>
+    ''', unsafe_allow_html=True)
+with c4:
+    st.markdown(f'''
+    <div class="kpi-card">
+        <div class="kpi-label">Wave-2 Deferred</div>
+        <div class="kpi-value">{unseated_count}</div>
+        <div class="kpi-trend trend-good">🛡️ {max(0, total_exam_students - rescued_exam_students)} Exam Candidates Stranded</div>
+    </div>
+    ''', unsafe_allow_html=True)
+
+st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
+
+# -----------------------------------------------------------------------------
+# 9. INTERACTIVE WORKSPACE TABS
+# -----------------------------------------------------------------------------
+tab_ai, tab_sim, tab_map, tab_manifest, tab_analytics = st.tabs([
+    "🤖 Multilingual AI Assistant",
+    "🎮 Live Route Simulator",
+    "🛰️ Network Topology Map",
+    "📋 Student Seat Manifest",
+    "📊 Load Analytics"
+])
+
+# --- TAB 1: MULTILINGUAL AI ASSISTANT WITH VOICE ---
+with tab_ai:
+    st.markdown("#### 💬 Ask the Routeless AI Assistant (English / हिन्दी / ಕನ್ನಡ)")
+    st.caption("Ask about exam bus seats, flooded road detours, or type a Student ID (e.g., RTL-2026005) to check boarding status.")
+
+    # Quick-tap beginner prompt pills
+    q1, q2, q3 = st.columns(3)
+    quick_prompt = None
+    with q1:
+        if st.button("❓ Will all exam students reach on time?", use_container_width=True):
+            quick_prompt = "Will all exam students reach on time?"
+    with q2:
+        if st.button("🌊 How are flooded roads handled?", use_container_width=True):
+            quick_prompt = "How are flooded roads handled?"
+    with q3:
+        if st.button("🔍 Check status for Student RTL-2026005", use_container_width=True):
+            quick_prompt = "Check status for Student RTL-2026005"
+
+    user_query = st.chat_input("Type your question here in English, Hindi, or Kannada...")
+    active_query = quick_prompt or user_query
+
+    def generate_ai_response(query: str, language: str):
+        q_lower = query.lower()
+        # Check if user asked for a specific student ID
+        matched_student = None
+        for _, row in df.iterrows():
+            if row["Student_ID"].lower() in q_lower:
+                matched_student = row
+                break
+
+        if matched_student is not None:
+            sid = matched_student["Student_ID"]
+            village = matched_student["Origin_Village"]
+            unit = matched_student["Assigned_Unit"]
+            route = matched_student["Corridor_Status"]
+            if language == "hi":
+                return f"छात्र {sid} ({village}) को {unit} आवंटित किया गया है। मार्ग की स्थिति: {route}।"
+            elif language == "kn":
+                return f"ವಿದ್ಯಾರ್ಥಿ {sid} ({village}) ಅವರಿಗೆ {unit} ನಿಗದಿಪಡಿಸಲಾಗಿದೆ. ಮಾರ್ಗದ ಸ್ಥಿತಿ: {route}."
+            return f"Student **{sid}** from **{village}** is assigned to **{unit}**. Route Status: **{route}**."
+
+        if any(w in q_lower for w in ["flood", "road", "blocked", "detour", "बाढ़", "सड़क", "ಪ್ರವಾಹ", "ರಸ್ತೆ"]):
+            if affected_village:
+                if language == "hi":
+                    return f"चेतावनी: {affected_village} मुख्य सड़क बाढ़ के कारण बंद है। एआई ने सभी बसों को कोडिहल्ली क्रीक बाईपास (+18 मिनट) पर मोड़ दिया है और छात्रों को 20 मिनट पहले बुलाया है।"
+                elif language == "kn":
+                    return f"ಎಚ್ಚರಿಕೆ: {affected_village} ಮುಖ್ಯ ರಸ್ತೆ ಪ್ರವಾಹದಿಂದ ಮುಚ್ಚಲ್ಪಟ್ಟಿದೆ. AI ಎಲ್ಲಾ ಬಸ್‌ಗಳನ್ನು ಕೋಡಿಹಳ್ಳಿ ಬೈಪಾಸ್ (+18 ನಿಮಿಷ) ಮೂಲಕ ತಿರುಗಿಸಿದೆ."
+                return f"**Flood Rerouting Active:** The direct road from **{affected_village}** is submerged. Our routing solver automatically diverted buses via the **Kodihalli Creek Bypass (+18 mins)** and advanced pickup alerts by 20 minutes."
+            else:
+                if language == "hi":
+                    return "अभी सभी सड़कें साफ हैं और बसें सामान्य समय पर चल रही हैं।"
+                elif language == "kn":
+                    return "ಪ್ರಸ್ತುತ ಎಲ್ಲಾ ರಸ್ತೆಗಳು ಸುರಕ್ಷಿತವಾಗಿವೆ ಮತ್ತು ಬಸ್‌ಗಳು ಸಾಮಾನ್ಯ ಸಮಯಕ್ಕೆ ಚಲಿಸುತ್ತಿವೆ."
+                return "**All Corridors Clear:** No roads are currently flooded. All buses are operating on their direct routes."
+
+        # Default comprehensive status answer
+        if language == "hi":
+            return (
+                f"वर्तमान स्थिति: {total_exam_students} परीक्षा छात्रों में से {rescued_exam_students} ({exam_rescue_rate:.1f}%) को सीट मिल चुकी है। "
+                f"{broken_buses} बसें खराब होने के बावजूद, {active_buses} एक्सप्रेस बसें और {feeder_units} स्थानीय ऑटो-रिक्शा छात्रों को समय पर परीक्षा केंद्र पहुंचा रहे हैं।"
+            )
+        elif language == "kn":
+            return (
+                f"ಪ್ರಸ್ತುತ ಸ್ಥಿತಿ: {total_exam_students} ಪರೀಕ್ಷಾ ವಿದ್ಯಾರ್ಥಿಗಳಲ್ಲಿ {rescued_exam_students} ({exam_rescue_rate:.1f}%) ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ ಸೀಟು ಖಚಿತವಾಗಿದೆ. "
+                f"{broken_buses} ಬಸ್‌ಗಳು ಕೆಟ್ಟುಹೋಗಿದ್ದರೂ, {active_buses} ಎಕ್ಸ್‌ಪ್ರೆಸ್ ಬಸ್‌ಗಳು ಮತ್ತು {feeder_units} ಸ್ಥಳೀಯ ಆಟೋ-ರಿಕ್ಷಾಗಳು ವಿದ್ಯಾರ್ಥಿಗಳನ್ನು ಸಮಯಕ್ಕೆ ಸರಿಯಾಗಿ ಪರೀಕ್ಷಾ ಕೇಂದ್ರಕ್ಕೆ ತಲುಪಿಸುತ್ತಿವೆ."
+            )
+        return (
+            f"**Live Dispatch Summary:** **{rescued_exam_students} of {total_exam_students}** exam candidates (**{exam_rescue_rate:.1f}%**) have confirmed transport. "
+            f"Even with **{broken_buses} buses offline** and a **+{demand_surge_pct}% demand surge**, our priority algorithm allocated **{active_buses} Express Gov Buses** and **{feeder_units} Micro-Feeder Autos** to ensure exam students arrive before gate closure."
+        )
+
+    if active_query:
+        st.session_state.chat_history.append({"role": "user", "content": active_query})
+        reply = generate_ai_response(active_query, lang_code)
+        audio_reply = text_to_audio_bytes(reply.replace("**", ""), lang_code)
+        st.session_state.chat_history.append({"role": "assistant", "content": reply, "audio": audio_reply})
+
+    for msg in st.session_state.chat_history[-6:]:
+        with st.chat_message(msg["role"]):
+            st.markdown(msg["content"])
+            if msg.get("audio"):
+                st.audio(msg["audio"], format="audio/mp3")
+
+# --- TAB 2: INTERACTIVE STEP-BY-STEP ROUTE SIMULATOR ---
+with tab_sim:
+    st.markdown("#### 🎮 Interactive Real-Time Fleet Movement & Crisis Simulation")
+    st.caption("Drag the timeline slider or click 'Run Live Simulation' to watch buses and micro-feeders navigate around flooded roads to the Exam Hub.")
+
+    sim_col1, sim_col2 = st.columns([1, 2.5])
+    with sim_col1:
+        sim_step = st.slider("Simulation Timeline (Minutes from Dispatch)", 0, 60, 30, step=5)
+        run_anim = st.button("▶️ Play Live Dispatch Animation", use_container_width=True)
+        
+        st.markdown(f"""
+        <div class="protocol-box">
+            <div class="protocol-title">⏱️ T + {sim_step} Mins Telemetry</div>
+            <div class="protocol-desc">
+            • <b>Active Express Buses:</b> {active_buses} en route<br>
+            • <b>Feeder Autos:</b> {feeder_units} bridging villages<br>
+            • <b>Detour Status:</b> {'Bypassing ' + affected_village if affected_village else 'Direct Paths'}<br>
+            • <b>Est. Arrival Completion:</b> {min(100, int((sim_step / 55) * 100))}%
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with sim_col2:
+        sim_placeholder = st.empty()
+
+        def render_sim_frame(minute_mark):
+            progress = min(1.0, minute_mark / 55.0)
+            hub = NODES["Kanakapura Edu Hub (Exam Center)"]
+            fig_sim = go.Figure()
+
+            # Draw corridors & moving vehicles
+            for v_name, coords in NODES.items():
+                if coords["type"] == "HUB":
+                    continue
+                is_flooded = (v_name == affected_village)
+                if is_flooded:
+                    # Blocked direct line (dashed red)
+                    fig_sim.add_trace(go.Scatter(
+                        x=[coords["lon"], hub["lon"]], y=[coords["lat"], hub["lat"]],
+                        mode="lines", line=dict(color="#DC2626", width=3, dash="dash"),
+                        name=f"{v_name} (Flooded)"
+                    ))
+                    # Detour via Kodihalli Creek
+                    wp = NODES["Kodihalli Creek"]
+                    fig_sim.add_trace(go.Scatter(
+                        x=[coords["lon"], wp["lon"], hub["lon"]],
+                        y=[coords["lat"], wp["lat"], hub["lat"]],
+                        mode="lines", line=dict(color="#D97706", width=3.5),
+                        name="Emergency Detour Bypass"
+                    ))
+                    # Vehicle position along 2-segment detour
+                    if progress < 0.5:
+                        p2 = progress * 2
+                        vx = coords["lon"] + (wp["lon"] - coords["lon"]) * p2
+                        vy = coords["lat"] + (wp["lat"] - coords["lat"]) * p2
+                    else:
+                        p2 = (progress - 0.5) * 2
+                        vx = wp["lon"] + (hub["lon"] - wp["lon"]) * p2
+                        vy = wp["lat"] + (hub["lat"] - wp["lat"]) * p2
+                else:
+                    fig_sim.add_trace(go.Scatter(
+                        x=[coords["lon"], hub["lon"]], y=[coords["lat"], hub["lat"]],
+                        mode="lines", line=dict(color="#0284C7", width=3),
+                        name=f"{v_name} Corridor"
+                    ))
+                    vx = coords["lon"] + (hub["lon"] - coords["lon"]) * progress
+                    vy = coords["lat"] + (hub["lat"] - coords["lat"]) * progress
+
+                # Moving Bus Marker
+                fig_sim.add_trace(go.Scatter(
+                    x=[vx], y=[vy], mode="markers+text",
+                    text=["🚌"], textfont=dict(size=18),
+                    marker=dict(size=12, color="#16A34A", line=dict(width=2, color="#0F172A")),
+                    showlegend=False
+                ))
+
+            # Plot Nodes
+            node_df = pd.DataFrame([{"Name": k, "Lon": v["lon"], "Lat": v["lat"]} for k, v in NODES.items()])
+            fig_sim.add_trace(go.Scatter(
+                x=node_df["Lon"], y=node_df["Lat"], mode="markers+text",
+                text=node_df["Name"], textposition="top center",
+                textfont=dict(family="Lora, serif", size=12, color="#0F172A"),
+                marker=dict(size=16, color="#0F172A"),
+                name="Stations"
+            ))
+
+            fig_sim.update_layout(
+                title=f"Live Fleet Position at T + {minute_mark} Minutes",
+                paper_bgcolor="#FFFFFF", plot_bgcolor="#F8FAFC",
+                font=dict(color="#0F172A", family="Lora, serif"),
+                height=420, margin=dict(l=15, r=15, t=40, b=15),
+                showlegend=False,
+                xaxis=dict(showgrid=True, gridcolor="#CBD5E1", linecolor="#0F172A", linewidth=2, mirror=True),
+                yaxis=dict(showgrid=True, gridcolor="#CBD5E1", linecolor="#0F172A", linewidth=2, mirror=True)
+            )
+            sim_placeholder.plotly_chart(fig_sim, use_container_width=True)
+
+        if run_anim:
+            for step in range(0, 60, 10):
+                render_sim_frame(step)
+                time.sleep(0.35)
+        else:
+            render_sim_frame(sim_step)
+
+# --- TAB 3: NETWORK TOPOLOGY MAP ---
+with tab_map:
+    col_map, col_intel = st.columns([2.3, 1])
+    with col_map:
+        map_df = pd.DataFrame([
+            {"Name": k, "Lon": v["lon"], "Lat": v["lat"], "Status": "SEVERED" if k == affected_village else "ACTIVE"}
+            for k, v in NODES.items()
+        ])
+        fig_map = px.scatter(
+            map_df, x="Lon", y="Lat", text="Name", color="Status",
+            color_discrete_map={"ACTIVE": "#0284C7", "SEVERED": "#DC2626"},
+            height=440
+        )
+        fig_map.update_traces(
+            textposition="top center",
+            textfont=dict(family="Lora, serif", size=13, color="#0F172A"),
+            marker=dict(size=18, line=dict(width=2.5, color="#0F172A"))
+        )
+        fig_map.update_layout(
+            paper_bgcolor="#FFFFFF", plot_bgcolor="#F8FAFC",
+            margin=dict(l=20, r=20, t=20, b=20),
+            font=dict(color="#0F172A", family="Lora, serif"),
+            xaxis=dict(showgrid=True, gridcolor="#CBD5E1", linecolor="#0F172A", linewidth=2, mirror=True),
+            yaxis=dict(showgrid=True, gridcolor="#CBD5E1", linecolor="#0F172A", linewidth=2, mirror=True),
+            legend=dict(x=0.02, y=0.98, bgcolor="rgba(255,255,255,0.95)", bordercolor="#0F172A", borderwidth=2)
+        )
+        st.plotly_chart(fig_map, use_container_width=True)
+
+    with col_intel:
+        st.markdown("#### 🧠 AI Rerouting Decisions")
+        if affected_village:
+            st.markdown(f"""
+            <div class="protocol-box" style="border-left-color: #DC2626; background: #FEF2F2;">
+                <div class="protocol-title" style="color: #991B1B;">Corridor Severed: {affected_village}</div>
+                <div class="protocol-desc">Direct road impassable due to flooding. Telemetry computed bypass via Kodihalli Creek (+18m detour).</div>
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            st.markdown("""
+            <div class="protocol-box" style="border-left-color: #16A34A; background: #F0FDF4;">
+                <div class="protocol-title" style="color: #166534;">All Arterial Routes Clear</div>
+                <div class="protocol-desc">Rural transit grid operating at normal speed (42 km/h avg).</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.markdown(f"""
+        <div class="protocol-box">
+            <div class="protocol-title">Fleet Reconsolidation</div>
+            <div class="protocol-desc">With <b>{broken_buses} buses offline</b>, remaining capacity is prioritized for exam students first.</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+# --- TAB 4: PRIORITY SEAT MANIFEST ---
+with tab_manifest:
+    f1, f2, f3 = st.columns([1.5, 1.5, 2])
+    with f1: filter_exam = st.selectbox("Filter Cohort", ["All Students", "Exam Candidates Only", "Non-Exam Commuters"])
+    with f2: filter_village = st.selectbox("Origin Village", ["All Villages"] + list(df["Origin_Village"].unique()))
+    with f3: search_id = st.text_input("Search Student ID", placeholder="e.g., RTL-2026004")
+
+    filtered_df = df.copy()
+    if filter_exam == "Exam Candidates Only": filtered_df = filtered_df[filtered_df["Exam_Candidate"]]
+    elif filter_exam == "Non-Exam Commuters": filtered_df = filtered_df[~filtered_df["Exam_Candidate"]]
+    if filter_village != "All Villages": filtered_df = filtered_df[filtered_df["Origin_Village"] == filter_village]
+    if search_id: filtered_df = filtered_df[filtered_df["Student_ID"].str.contains(search_id, case=False)]
+
+    st.dataframe(
+        filtered_df[["Student_ID", "Origin_Village", "Exam_Candidate", "Minutes_To_Gate_Close", "Criticality_Index", "Corridor_Status", "Assigned_Unit"]],
+        use_container_width=True, height=420,
+        column_config={
+            "Criticality_Index": st.column_config.ProgressColumn("Criticality Score", format="%.1f", min_value=0, max_value=100),
+            "Exam_Candidate": st.column_config.CheckboxColumn("Exam Today"),
+            "Minutes_To_Gate_Close": st.column_config.NumberColumn("Gate Closes (Min)", format="%d m")
+        }
+    )
+
+# --- TAB 5: LOAD ANALYTICS ---
+with tab_analytics:
+    g1, g2 = st.columns(2)
+    with g1:
+        village_summary = df.groupby(["Origin_Village", "Exam_Candidate"]).size().reset_index(name="Count")
+        village_summary["Type"] = np.where(village_summary["Exam_Candidate"], "Exam Candidate (Priority)", "Regular Commuter")
+        fig1 = px.bar(
+            village_summary, x="Origin_Village", y="Count", color="Type",
+            color_discrete_map={"Exam Candidate (Priority)": "#0284C7", "Regular Commuter": "#94A3B8"}
+        )
+        fig1.update_traces(marker_line_color="#0F172A", marker_line_width=1.5)
+        fig1.update_layout(
+            paper_bgcolor="#FFFFFF", plot_bgcolor="#F8FAFC",
+            font=dict(color="#0F172A", family="Lora, serif"),
+            margin=dict(l=20, r=20, t=30, b=20),
+            xaxis=dict(linecolor="#0F172A", linewidth=2, mirror=True),
+            yaxis=dict(linecolor="#0F172A", linewidth=2, mirror=True, gridcolor="#E2E8F0")
+        )
+        st.plotly_chart(fig1, use_container_width=True)
+    with g2:
+        mode_counts = df["Assigned_Unit"].apply(lambda x: "Gov Express Bus" if "GOV-BUS" in x else ("Micro-Feeder" if "FEEDER" in x else "Deferred")).value_counts()
+        fig2 = px.pie(
+            names=mode_counts.index, values=mode_counts.values, hole=0.55,
+            color_discrete_sequence=["#16A34A", "#0284C7", "#DC2626"]
+        )
+        fig2.update_traces(marker=dict(line=dict(color="#0F172A", width=2)))
+        fig2.update_layout(
+            paper_bgcolor="#FFFFFF", plot_bgcolor="#FFFFFF",
+            font=dict(color="#0F172A", family="Lora, serif"),
+            margin=dict(l=20, r=20, t=30, b=20)
+        )
+        st.plotly_chart(fig2, use_container_width=True)
