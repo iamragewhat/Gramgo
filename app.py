@@ -18,7 +18,6 @@ st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
-    /* Global Theme & Typography */
     .stApp {
         background-color: #060913;
         color: #E2E8F0;
@@ -29,7 +28,6 @@ st.markdown("""
     footer {visibility: hidden;}
     header {background: transparent !important;}
 
-    /* Sidebar Styling */
     [data-testid="stSidebar"] {
         background-color: #0A0F1D;
         border-right: 1px solid rgba(255, 255, 255, 0.06);
@@ -42,7 +40,6 @@ st.markdown("""
         text-transform: uppercase;
     }
 
-    /* Top Command Header */
     .command-header {
         display: flex;
         justify-content: space-between;
@@ -89,14 +86,11 @@ st.markdown("""
         border: 1px solid rgba(0, 230, 118, 0.3);
     }
 
-    /* KPI Telemetry Cards */
     .kpi-card {
         background: linear-gradient(145deg, #0B101D 0%, #070A14 100%);
         border: 1px solid rgba(255, 255, 255, 0.06);
         border-radius: 8px;
         padding: 20px;
-        position: relative;
-        overflow: hidden;
         transition: all 0.3s ease;
     }
     .kpi-card:hover {
@@ -128,13 +122,10 @@ st.markdown("""
     .trend-warn { color: #FFD740; }
     .trend-bad { color: #FF5252; }
 
-    /* Protocol Boxes */
     .protocol-box {
         background: #0A0F1D;
         border-left: 3px solid #38BDF8;
-        border-top: 1px solid rgba(255,255,255,0.05);
-        border-right: 1px solid rgba(255,255,255,0.05);
-        border-bottom: 1px solid rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.05);
         padding: 16px;
         border-radius: 6px;
         margin-bottom: 14px;
@@ -145,7 +136,6 @@ st.markdown("""
         font-weight: 700;
         color: #38BDF8;
         margin-bottom: 6px;
-        letter-spacing: 0.5px;
     }
     .protocol-desc {
         font-size: 0.85rem;
@@ -153,7 +143,6 @@ st.markdown("""
         line-height: 1.5;
     }
 
-    /* Customizing Tabs */
     .stTabs [data-baseweb="tab-list"] {
         gap: 6px;
         background-color: #0A0F1D;
@@ -172,14 +161,6 @@ st.markdown("""
     .stTabs [aria-selected="true"] {
         background-color: #162035 !important;
         color: #38BDF8 !important;
-    }
-
-    /* Inputs & Sliders styling */
-    .stSlider label, .stSelectbox label, .stToggle label {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 0.85rem;
-        font-weight: 500;
-        color: #CBD5E1;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -356,21 +337,24 @@ with tab_map:
     
     with col_map:
         map_df = pd.DataFrame([
-            {"Name": k, "Lat": v["lat"], "Lon": v["lon"], "Type": v["type"], "Status": "SEVERED" if k == affected_village else "ACTIVE"}
+            {"Name": k, "Lon": v["lon"], "Lat": v["lat"], "Type": v["type"], "Status": "SEVERED" if k == affected_village else "ACTIVE"}
             for k, v in NODES.items()
         ])
         
-        fig_map = px.scatter_mapbox(
-            map_df, lat="Lat", lon="Lon", text="Name", color="Status",
+        # 100% stable tactical scatter plot grid (No token/projection errors)
+        fig_map = px.scatter(
+            map_df, x="Lon", y="Lat", text="Name", color="Status",
             color_discrete_map={"ACTIVE": "#38BDF8", "SEVERED": "#FF5252"},
-            zoom=10.2, height=460
+            size_max=22, height=460
         )
+        fig_map.update_traces(textposition="top center", marker=dict(size=16))
         fig_map.update_layout(
-            mapbox_style="carto-darkmatter",
             paper_bgcolor="#0A0F1D",
             plot_bgcolor="#0A0F1D",
-            margin=dict(l=0, r=0, t=0, b=0),
+            margin=dict(l=20, r=20, t=20, b=20),
             font=dict(color="#E2E8F0", family="Plus Jakarta Sans"),
+            xaxis=dict(showgrid=True, gridcolor="#1E293B", zeroline=False),
+            yaxis=dict(showgrid=True, gridcolor="#1E293B", zeroline=False),
             legend=dict(x=0.02, y=0.98, bgcolor="rgba(10,15,29,0.8)")
         )
         st.plotly_chart(fig_map, use_container_width=True)
