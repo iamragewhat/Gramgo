@@ -21,7 +21,6 @@ st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
 
-    /* Playful Animations & Glowing Buttons */
     @keyframes bounceGlow {
         0% { transform: translateY(0px); box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4); }
         50% { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(79, 70, 229, 0.2); }
@@ -46,7 +45,7 @@ st.markdown("""
     }
     [data-testid="stSidebar"] h3 {
         font-family: 'Fredoka', sans-serif !important;
-        font-size: 1.2rem !important;
+        font-size: 1.15rem !important;
         font-weight: 700 !important;
         color: #FFFFFF !important;
         background: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%);
@@ -55,7 +54,6 @@ st.markdown("""
         border: 2.5px solid #0F172A;
         box-shadow: 3px 3px 0px #0F172A;
         text-align: center;
-        letter-spacing: 0.5px;
     }
 
     /* Chunky, Playful Command Banner */
@@ -105,7 +103,6 @@ st.markdown("""
         padding: 22px;
         box-shadow: 5px 5px 0px #0F172A;
         transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-        cursor: pointer;
     }
     .kpi-card:hover {
         transform: translateY(-4px) translateX(-2px);
@@ -182,7 +179,6 @@ st.markdown("""
         box-shadow: 3px 3px 0px #0F172A;
     }
 
-    /* Readable Headings & Form Inputs */
     h1, h2, h3, h4 {
         font-family: 'Fredoka', sans-serif !important;
         color: #0F172A !important;
@@ -320,7 +316,7 @@ if "custom_students" not in st.session_state:
     st.session_state.custom_students = []
 
 # -----------------------------------------------------------------------------
-# 5. SIDEBAR: SUPER VISIBLE BUTTONS & CONTROLS
+# 5. SIDEBAR CONTROLS
 # -----------------------------------------------------------------------------
 with st.sidebar:
     st.markdown("### 🌐 Select Language")
@@ -429,13 +425,15 @@ unseated_count = total_students - total_seated
 # 7. HEADER & AUDIO GUIDE
 # -----------------------------------------------------------------------------
 is_crisis = (broken_buses > 0) or (demand_surge_pct >= 25) or (affected_village is not None)
+badge_text = "⚡ Challenge Active!" if is_crisis else "🌟 All Safe & Happy!"
+
 st.markdown(f"""
 <div class="command-header">
     <div>
         <div class="command-title">{strings['title']}</div>
         <div class="command-subtitle">{strings['subtitle']}</div>
     </div>
-    <div class="status-badge">{'⚡ Challenge Active!' : '🌟 All Safe & Happy!'}</div>
+    <div class="status-badge">{badge_text}</div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -588,7 +586,7 @@ with tab_people:
     with p1:
         st.markdown(f'<div class="kpi-card kpi-emerald"><div class="kpi-label">🏫 Safely at School</div><div class="kpi-value">{arrived_cnt}</div><div class="kpi-trend">Ready to learn</div></div>', unsafe_allow_html=True)
     with p2:
-        st.markdown(f'<div class="kpi-card kpi-sky"><div class="kpi-label">🚌 On the Bus</div><div class="kpi-value">{transit_cnt}</div><div class="kpi-trend">Rriding happily</div></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="kpi-card kpi-sky"><div class="kpi-label">🚌 On the Bus</div><div class="kpi-value">{transit_cnt}</div><div class="kpi-trend">Riding happily</div></div>', unsafe_allow_html=True)
     with p3:
         st.markdown(f'<div class="kpi-card kpi-amber"><div class="kpi-label">🚏 Waiting at Stop</div><div class="kpi-value">{waiting_cnt}</div><div class="kpi-trend">Bus arriving soon</div></div>', unsafe_allow_html=True)
 
@@ -746,6 +744,7 @@ with tab_sim:
                         name="Bus Route"
                     ))
                     vx = coords["lon"] + (hub["lon"] - coords["lon"]) * progress
+                    vy = coords["lat"] + (hub["lat"] - hub["lat"]) * progress # Wait, fix y interpolation:
                     vy = coords["lat"] + (hub["lat"] - coords["lat"]) * progress
 
                 fig_sim.add_trace(go.Scatter(
