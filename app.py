@@ -11,7 +11,7 @@ import time
 # 1. PAGE CONFIG & HIGH-CONTRAST ACCESSIBLE DESIGN SYSTEM
 # -----------------------------------------------------------------------------
 st.set_page_config(
-    page_title="ROUTELESS // Kids, Students & Senior Transit Game",
+    page_title="ROUTELESS // Kids, Students & Senior Transit",
     page_icon="🚀",
     layout="wide",
     initial_sidebar_state="expanded"
