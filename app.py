@@ -8,7 +8,7 @@ from io import BytesIO
 import time
 
 # -----------------------------------------------------------------------------
-# 1. PAGE CONFIG & GAMIFIED ACCESSIBLE DESIGN SYSTEM
+# 1. PAGE CONFIG & HIGH-CONTRAST ACCESSIBLE DESIGN SYSTEM
 # -----------------------------------------------------------------------------
 st.set_page_config(
     page_title="ROUTELESS // Kids, Students & Senior Transit Game",
@@ -36,6 +36,14 @@ st.markdown("""
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {background: transparent !important;}
+
+    /* Make Sidebar Collapse / Expand Arrow Dark and Highly Visible */
+    [data-testid="collapsedControl"] svg, button[kind="header"] svg {
+        fill: #0F172A !important;
+        color: #0F172A !important;
+        stroke: #0F172A !important;
+        stroke-width: 2.5px !important;
+    }
 
     /* Highly Visible Side Panel / Sidebar */
     [data-testid="stSidebar"] {
@@ -605,10 +613,12 @@ with tab_people:
         fig1.update_traces(marker_line_color="#0F172A", marker_line_width=2)
         fig1.update_layout(
             paper_bgcolor="#FFFFFF", plot_bgcolor="#F8FAFC",
-            font=dict(color="#0F172A", family="Plus Jakarta Sans"),
+            font=dict(color="#0F172A", family="Plus Jakarta Sans", size=13),
+            title_font=dict(color="#0F172A", size=16, family="Fredoka"),
+            legend=dict(font=dict(color="#0F172A", size=12)),
             margin=dict(l=20, r=20, t=45, b=20),
-            xaxis=dict(linecolor="#0F172A", linewidth=2, mirror=True, title=""),
-            yaxis=dict(linecolor="#0F172A", linewidth=2, mirror=True, gridcolor="#CBD5E1", title="Number of Students")
+            xaxis=dict(linecolor="#0F172A", linewidth=2.5, mirror=True, title="", tickfont=dict(color="#0F172A", size=11)),
+            yaxis=dict(linecolor="#0F172A", linewidth=2.5, mirror=True, gridcolor="#CBD5E1", title="Number of Students", title_font=dict(color="#0F172A"), tickfont=dict(color="#0F172A"))
         )
         st.plotly_chart(fig1, use_container_width=True)
 
@@ -621,10 +631,12 @@ with tab_people:
             title="How Students are Traveling",
             color_discrete_sequence=["#10B981", "#3B82F6", "#F59E0B"]
         )
-        fig2.update_traces(marker=dict(line=dict(color="#0F172A", width=2.5)), textinfo="percent+label")
+        fig2.update_traces(marker=dict(line=dict(color="#0F172A", width=2.5)), textinfo="percent+label", textfont=dict(color="#0F172A", size=13, family="Fredoka"))
         fig2.update_layout(
             paper_bgcolor="#FFFFFF", plot_bgcolor="#FFFFFF",
-            font=dict(color="#0F172A", family="Plus Jakarta Sans"),
+            font=dict(color="#0F172A", family="Plus Jakarta Sans", size=13),
+            title_font=dict(color="#0F172A", size=16, family="Fredoka"),
+            legend=dict(font=dict(color="#0F172A", size=12)),
             margin=dict(l=20, r=20, t=45, b=20)
         )
         st.plotly_chart(fig2, use_container_width=True)
@@ -744,7 +756,6 @@ with tab_sim:
                         name="Bus Route"
                     ))
                     vx = coords["lon"] + (hub["lon"] - coords["lon"]) * progress
-                    vy = coords["lat"] + (hub["lat"] - hub["lat"]) * progress # Wait, fix y interpolation:
                     vy = coords["lat"] + (hub["lat"] - coords["lat"]) * progress
 
                 fig_sim.add_trace(go.Scatter(
@@ -766,11 +777,12 @@ with tab_sim:
             fig_sim.update_layout(
                 title=f"Bus Simulation at Minute {minute_mark}",
                 paper_bgcolor="#FFFFFF", plot_bgcolor="#F8FAFC",
-                font=dict(color="#0F172A", family="Plus Jakarta Sans"),
+                font=dict(color="#0F172A", family="Plus Jakarta Sans", size=13),
+                title_font=dict(color="#0F172A", size=16, family="Fredoka"),
                 height=420, margin=dict(l=15, r=15, t=40, b=15),
                 showlegend=False,
-                xaxis=dict(showgrid=True, gridcolor="#CBD5E1", linecolor="#0F172A", linewidth=2.5, mirror=True),
-                yaxis=dict(showgrid=True, gridcolor="#CBD5E1", linecolor="#0F172A", linewidth=2.5, mirror=True)
+                xaxis=dict(showgrid=True, gridcolor="#CBD5E1", linecolor="#0F172A", linewidth=2.5, mirror=True, tickfont=dict(color="#0F172A")),
+                yaxis=dict(showgrid=True, gridcolor="#CBD5E1", linecolor="#0F172A", linewidth=2.5, mirror=True, tickfont=dict(color="#0F172A"))
             )
             sim_placeholder.plotly_chart(fig_sim, use_container_width=True)
 
