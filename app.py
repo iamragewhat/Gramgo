@@ -5,7 +5,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 # -----------------------------------------------------------------------------
-# 1. PAGE CONFIG & DESIGN SYSTEM (CUSTOM CSS)
+# 1. PAGE CONFIG & LIGHT-MODE CURVY DESIGN SYSTEM (CUSTOM CSS)
 # -----------------------------------------------------------------------------
 st.set_page_config(
     page_title="ROUTELESS // Tactical Transit Command",
@@ -16,151 +16,205 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700;1,800&family=Lora:ital,wght@0,600;0,700;1,600;1,700&display=swap');
 
+    /* Global Light Background, Dark Text, Bold & Italic Curvy Font */
     .stApp {
-        background-color: #060913;
-        color: #E2E8F0;
-        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: #F4F6F9;
+        color: #0F172A;
+        font-family: 'Lora', Georgia, serif;
+        font-weight: 700;
+        font-style: italic;
     }
 
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {background: transparent !important;}
 
+    /* Sidebar Styling with Darkened Boundary */
     [data-testid="stSidebar"] {
-        background-color: #0A0F1D;
-        border-right: 1px solid rgba(255, 255, 255, 0.06);
+        background-color: #FFFFFF;
+        border-right: 2.5px solid #0F172A;
     }
     [data-testid="stSidebar"] .stMarkdown h3 {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.85rem;
-        letter-spacing: 1.2px;
-        color: #38BDF8;
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: 1.05rem;
+        font-weight: 800;
+        font-style: italic;
+        letter-spacing: 0.8px;
+        color: #0F172A;
         text-transform: uppercase;
+        border-bottom: 2px solid #0F172A;
+        padding-bottom: 6px;
+    }
+    [data-testid="stSidebar"] p, [data-testid="stSidebar"] label, [data-testid="stSidebar"] span {
+        color: #0F172A !important;
+        font-family: 'Lora', Georgia, serif !important;
+        font-weight: 700 !important;
+        font-style: italic !important;
     }
 
+    /* Top Command Header */
     .command-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 20px 28px;
-        background: linear-gradient(135deg, #0D1424 0%, #090D18 100%);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-left: 4px solid #00F2FE;
-        border-radius: 10px;
+        padding: 22px 28px;
+        background: #FFFFFF;
+        border: 2.5px solid #0F172A;
+        border-left: 8px solid #0F172A;
+        border-radius: 14px;
         margin-bottom: 24px;
-        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        box-shadow: 5px 5px 0px #0F172A;
     }
     .command-title {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 1.35rem;
-        font-weight: 700;
-        letter-spacing: 1.5px;
-        color: #FFFFFF;
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: 1.65rem;
+        font-weight: 800;
+        font-style: italic;
+        letter-spacing: 0.5px;
+        color: #0F172A;
         margin: 0;
     }
     .command-subtitle {
-        font-size: 0.82rem;
-        color: #94A3B8;
+        font-family: 'Lora', Georgia, serif;
+        font-size: 0.9rem;
+        font-weight: 700;
+        font-style: italic;
+        color: #334155;
         margin-top: 4px;
-        font-weight: 400;
-        letter-spacing: 0.5px;
     }
     .status-badge {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.75rem;
-        padding: 8px 14px;
-        border-radius: 6px;
-        font-weight: 700;
-        letter-spacing: 1px;
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: 0.85rem;
+        padding: 8px 16px;
+        border-radius: 999px;
+        font-weight: 800;
+        font-style: italic;
+        letter-spacing: 0.5px;
+        border: 2px solid #0F172A;
     }
     .status-crisis {
-        background: rgba(255, 75, 75, 0.12);
-        color: #FF5252;
-        border: 1px solid rgba(255, 82, 82, 0.3);
+        background: #FEE2E2;
+        color: #991B1B;
     }
     .status-normal {
-        background: rgba(0, 200, 83, 0.12);
-        color: #00E676;
-        border: 1px solid rgba(0, 230, 118, 0.3);
+        background: #DCFCE7;
+        color: #166534;
     }
 
+    /* KPI Telemetry Cards with Darkened Boundaries */
     .kpi-card {
-        background: linear-gradient(145deg, #0B101D 0%, #070A14 100%);
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        border-radius: 8px;
+        background: #FFFFFF;
+        border: 2.5px solid #0F172A;
+        border-radius: 14px;
         padding: 20px;
-        transition: all 0.3s ease;
+        box-shadow: 4px 4px 0px #0F172A;
+        transition: all 0.2s ease;
     }
     .kpi-card:hover {
-        border-color: rgba(56, 189, 248, 0.3);
-        transform: translateY(-2px);
+        transform: translate(-2px, -2px);
+        box-shadow: 6px 6px 0px #0F172A;
     }
     .kpi-label {
-        font-size: 0.72rem;
+        font-family: 'Lora', Georgia, serif;
+        font-size: 0.8rem;
         text-transform: uppercase;
-        letter-spacing: 1.2px;
-        color: #8A99AD;
-        font-weight: 600;
+        letter-spacing: 0.8px;
+        color: #334155;
+        font-weight: 700;
+        font-style: italic;
         margin-bottom: 8px;
     }
     .kpi-value {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 1.9rem;
-        font-weight: 700;
-        color: #FFFFFF;
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: 2.1rem;
+        font-weight: 800;
+        font-style: italic;
+        color: #0F172A;
         line-height: 1.1;
     }
     .kpi-trend {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.72rem;
+        font-family: 'Lora', Georgia, serif;
+        font-size: 0.78rem;
         margin-top: 8px;
-        font-weight: 500;
+        font-weight: 700;
+        font-style: italic;
     }
-    .trend-good { color: #00E676; }
-    .trend-warn { color: #FFD740; }
-    .trend-bad { color: #FF5252; }
+    .trend-good { color: #15803D; }
+    .trend-warn { color: #B45309; }
+    .trend-bad { color: #B91C1C; }
 
+    /* Protocol Boxes */
     .protocol-box {
-        background: #0A0F1D;
-        border-left: 3px solid #38BDF8;
-        border: 1px solid rgba(255,255,255,0.05);
+        background: #FFFFFF;
+        border: 2px solid #0F172A;
+        border-left: 6px solid #0F172A;
         padding: 16px;
-        border-radius: 6px;
+        border-radius: 12px;
         margin-bottom: 14px;
+        box-shadow: 3px 3px 0px #0F172A;
     }
     .protocol-title {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.82rem;
-        font-weight: 700;
-        color: #38BDF8;
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: 0.95rem;
+        font-weight: 800;
+        font-style: italic;
+        color: #0F172A;
         margin-bottom: 6px;
     }
     .protocol-desc {
-        font-size: 0.85rem;
-        color: #94A3B8;
+        font-family: 'Lora', Georgia, serif;
+        font-size: 0.88rem;
+        font-weight: 600;
+        font-style: italic;
+        color: #1E293B;
         line-height: 1.5;
     }
 
+    /* Customizing Tabs with Darkened Boundaries */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 6px;
-        background-color: #0A0F1D;
-        padding: 6px;
-        border-radius: 8px;
-        border: 1px solid rgba(255, 255, 255, 0.06);
+        gap: 8px;
+        background-color: #FFFFFF;
+        padding: 8px;
+        border-radius: 12px;
+        border: 2.5px solid #0F172A;
+        box-shadow: 3px 3px 0px #0F172A;
     }
     .stTabs [data-baseweb="tab"] {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.78rem;
-        color: #8A99AD;
-        border-radius: 6px;
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: 0.88rem;
+        color: #334155;
+        border-radius: 8px;
         padding: 10px 18px;
-        font-weight: 600;
+        font-weight: 800;
+        font-style: italic;
+        border: 1.5px solid transparent;
     }
     .stTabs [aria-selected="true"] {
-        background-color: #162035 !important;
-        color: #38BDF8 !important;
+        background-color: #0F172A !important;
+        color: #FFFFFF !important;
+        border: 1.5px solid #0F172A !important;
+    }
+
+    /* Inputs, Selectboxes, Dataframes & Headings */
+    h1, h2, h3, h4, p, label, .stMarkdown {
+        color: #0F172A !important;
+        font-family: 'Lora', Georgia, serif !important;
+        font-weight: 700 !important;
+        font-style: italic !important;
+    }
+    [data-baseweb="select"] > div, [data-baseweb="input"] > div {
+        background-color: #FFFFFF !important;
+        border: 2px solid #0F172A !important;
+        border-radius: 8px !important;
+        color: #0F172A !important;
+    }
+    [data-testid="stDataFrame"] {
+        border: 2.5px solid #0F172A;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 4px 4px 0px #0F172A;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -202,7 +256,7 @@ def generate_base_manifest():
 # 3. SIDEBAR CONTROLS
 # -----------------------------------------------------------------------------
 with st.sidebar:
-    st.markdown("### 🎛️ SCENARIO SIMULATOR")
+    st.markdown("### 🎛️ Scenario Simulator")
     st.caption("Inject live network disruptions to test dynamic bus reallocation.")
     st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
     
@@ -216,15 +270,15 @@ with st.sidebar:
     deploy_micro_feeders = st.toggle("Deploy Local Auto/Van Feeders", value=True)
     
     st.markdown("---")
-    st.markdown("### ⚙️ FLEET ENGINE")
+    st.markdown("### ⚙️ Fleet Engine")
     total_fleet = 8
     bus_capacity = 48
     st.markdown(f"""
-    <div style='font-family: "JetBrains Mono", monospace; font-size: 0.78rem; color: #64748B; line-height: 1.6;'>
-    • BASE FLEET: {total_fleet} GOV BUSES<br>
-    • CAPACITY: {bus_capacity} PAX/BUS<br>
-    • MICRO-FEEDER: 6 PAX/UNIT<br>
-    • SOLVER ALGORITHM: V2.4-KNAPSACK
+    <div style='font-family: "Lora", serif; font-size: 0.85rem; font-weight: 700; font-style: italic; color: #0F172A; line-height: 1.7; background: #F8FAFC; padding: 12px; border: 2px solid #0F172A; border-radius: 10px;'>
+    • Base Fleet: {total_fleet} Gov Buses<br>
+    • Capacity: {bus_capacity} Pax/Bus<br>
+    • Micro-Feeder: 6 Pax/Unit<br>
+    • Solver: V2.4-Knapsack
     </div>
     """, unsafe_allow_html=True)
 
@@ -279,10 +333,10 @@ is_crisis = (broken_buses > 0) or (demand_surge_pct >= 25) or (affected_village 
 st.markdown(f"""
 <div class="command-header">
     <div>
-        <div class="command-title">ROUTELESS // TRANSIT COMMAND CENTER</div>
-        <div class="command-subtitle">KANAKAPURA EDUCATION HUB &nbsp;|&nbsp; CRISIS DISPATCH & ALLOCATION ENGINE</div>
+        <div class="command-title">Routeless // Transit Command Center</div>
+        <div class="command-subtitle">Kanakapura Education Hub &nbsp;|&nbsp; Crisis Dispatch & Allocation Engine</div>
     </div>
-    <div class="status-badge {'status-crisis' if is_crisis else 'status-normal'}">{'● ACTIVE CRISIS PROTOCOL' if is_crisis else '● NORMAL OPERATIONS'}</div>
+    <div class="status-badge {'status-crisis' if is_crisis else 'status-normal'}">{'● Active Crisis Protocol' if is_crisis else '● Normal Operations'}</div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -292,15 +346,15 @@ with c1:
     <div class="kpi-card">
         <div class="kpi-label">Exam Candidate Coverage</div>
         <div class="kpi-value">{exam_rescue_rate:.1f}%</div>
-        <div class="kpi-trend trend-good">✓ {rescued_exam_students} / {total_exam_students} EXAMINEES SECURED</div>
+        <div class="kpi-trend trend-good">✓ {rescued_exam_students} / {total_exam_students} Examinees Secured</div>
     </div>
     ''', unsafe_allow_html=True)
 with c2:
     st.markdown(f'''
     <div class="kpi-card">
         <div class="kpi-label">Active Fleet Capacity</div>
-        <div class="kpi-value">{total_seated} <span style="font-size:1.1rem;color:#64748B;">/ {total_students}</span></div>
-        <div class="kpi-trend trend-warn">⚡ {active_buses} BUSES + FEEDERS ACTIVE</div>
+        <div class="kpi-value">{total_seated} <span style="font-size:1.15rem;color:#475569;">/ {total_students}</span></div>
+        <div class="kpi-trend trend-warn">⚡ {active_buses} Buses + Feeders Active</div>
     </div>
     ''', unsafe_allow_html=True)
 with c3:
@@ -308,7 +362,7 @@ with c3:
     <div class="kpi-card">
         <div class="kpi-label">Demand Surge Load</div>
         <div class="kpi-value">+{demand_surge_pct}%</div>
-        <div class="kpi-trend trend-bad">⚠ {broken_buses} GOV BUSES OFFLINE</div>
+        <div class="kpi-trend trend-bad">⚠ {broken_buses} Gov Buses Offline</div>
     </div>
     ''', unsafe_allow_html=True)
 with c4:
@@ -316,20 +370,20 @@ with c4:
     <div class="kpi-card">
         <div class="kpi-label">Wave-2 Deferred</div>
         <div class="kpi-value">{unseated_count}</div>
-        <div class="kpi-trend trend-good">🛡️ 0 EXAM CANDIDATES STRANDED</div>
+        <div class="kpi-trend trend-good">🛡️ 0 Exam Candidates Stranded</div>
     </div>
     ''', unsafe_allow_html=True)
 
-st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
+st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
 # 6. TABS & INTERACTIVE VIEWS
 # -----------------------------------------------------------------------------
 tab_map, tab_manifest, tab_analytics, tab_comms = st.tabs([
-    "🛰️ GEOSPATIAL NETWORK MAP",
-    "📋 PRIORITY SEAT MANIFEST",
-    "📊 LOAD & CAPACITY TELEMETRY",
-    "📡 AUTOMATED COMMS GATEWAY"
+    "🛰️ Geospatial Network Map",
+    "📋 Priority Seat Manifest",
+    "📊 Load & Capacity Telemetry",
+    "📡 Automated Comms Gateway"
 ])
 
 with tab_map:
@@ -341,44 +395,47 @@ with tab_map:
             for k, v in NODES.items()
         ])
         
-        # 100% stable tactical scatter plot grid (No token/projection errors)
         fig_map = px.scatter(
             map_df, x="Lon", y="Lat", text="Name", color="Status",
-            color_discrete_map={"ACTIVE": "#38BDF8", "SEVERED": "#FF5252"},
-            size_max=22, height=460
+            color_discrete_map={"ACTIVE": "#0284C7", "SEVERED": "#DC2626"},
+            height=460
         )
-        fig_map.update_traces(textposition="top center", marker=dict(size=16))
+        fig_map.update_traces(
+            textposition="top center",
+            textfont=dict(family="Lora, serif", size=13, color="#0F172A"),
+            marker=dict(size=18, line=dict(width=2.5, color="#0F172A"))
+        )
         fig_map.update_layout(
-            paper_bgcolor="#0A0F1D",
-            plot_bgcolor="#0A0F1D",
+            paper_bgcolor="#FFFFFF",
+            plot_bgcolor="#F8FAFC",
             margin=dict(l=20, r=20, t=20, b=20),
-            font=dict(color="#E2E8F0", family="Plus Jakarta Sans"),
-            xaxis=dict(showgrid=True, gridcolor="#1E293B", zeroline=False),
-            yaxis=dict(showgrid=True, gridcolor="#1E293B", zeroline=False),
-            legend=dict(x=0.02, y=0.98, bgcolor="rgba(10,15,29,0.8)")
+            font=dict(color="#0F172A", family="Lora, serif"),
+            xaxis=dict(showgrid=True, gridcolor="#CBD5E1", zeroline=False, linecolor="#0F172A", linewidth=2, mirror=True),
+            yaxis=dict(showgrid=True, gridcolor="#CBD5E1", zeroline=False, linecolor="#0F172A", linewidth=2, mirror=True),
+            legend=dict(x=0.02, y=0.98, bgcolor="rgba(255,255,255,0.95)", bordercolor="#0F172A", borderwidth=2)
         )
         st.plotly_chart(fig_map, use_container_width=True)
 
     with col_intel:
-        st.markdown("#### 🧠 AI REROUTING LOGIC")
+        st.markdown("#### 🧠 AI Rerouting Logic")
         if affected_village:
             st.markdown(f"""
-            <div class="protocol-box" style="border-left-color: #FF5252;">
-                <div class="protocol-title" style="color: #FF5252;">CORRIDOR SEVERED: {affected_village.upper()}</div>
+            <div class="protocol-box" style="border-left-color: #DC2626; background: #FEF2F2;">
+                <div class="protocol-title" style="color: #991B1B;">Corridor Severed: {affected_village}</div>
                 <div class="protocol-desc">Direct road impassable due to flooding. Telemetry automatically computed bypass via Kodihalli Creek (+18m detour).</div>
             </div>
             """, unsafe_allow_html=True)
         else:
             st.markdown("""
-            <div class="protocol-box" style="border-left-color: #00E676;">
-                <div class="protocol-title" style="color: #00E676;">ALL ARTERIAL ROUTES CLEAR</div>
+            <div class="protocol-box" style="border-left-color: #16A34A; background: #F0FDF4;">
+                <div class="protocol-title" style="color: #166534;">All Arterial Routes Clear</div>
                 <div class="protocol-desc">Rural transit grid operating at normal speed (42 km/h avg).</div>
             </div>
             """, unsafe_allow_html=True)
 
         st.markdown(f"""
         <div class="protocol-box">
-            <div class="protocol-title">FLEET RECONSOLIDATION</div>
+            <div class="protocol-title">Fleet Reconsolidation</div>
             <div class="protocol-desc">With <b>{broken_buses} buses offline</b>, remaining capacity is re-indexed by exam priority score. Non-exam commuters shifted to Wave-2.</div>
         </div>
         """, unsafe_allow_html=True)
@@ -410,21 +467,41 @@ with tab_analytics:
     with g1:
         village_summary = df.groupby(["Origin_Village", "Exam_Candidate"]).size().reset_index(name="Count")
         village_summary["Type"] = np.where(village_summary["Exam_Candidate"], "Exam Candidate (Priority)", "Regular Commuter")
-        fig1 = px.bar(village_summary, x="Origin_Village", y="Count", color="Type", color_discrete_map={"Exam Candidate (Priority)": "#38BDF8", "Regular Commuter": "#1E293B"})
-        fig1.update_layout(paper_bgcolor="#0A0F1D", plot_bgcolor="#0A0F1D", font=dict(color="#E2E8F0", family="Plus Jakarta Sans"), margin=dict(l=20, r=20, t=30, b=20))
+        fig1 = px.bar(
+            village_summary, x="Origin_Village", y="Count", color="Type",
+            color_discrete_map={"Exam Candidate (Priority)": "#0284C7", "Regular Commuter": "#94A3B8"}
+        )
+        fig1.update_traces(marker_line_color="#0F172A", marker_line_width=1.5)
+        fig1.update_layout(
+            paper_bgcolor="#FFFFFF",
+            plot_bgcolor="#F8FAFC",
+            font=dict(color="#0F172A", family="Lora, serif"),
+            margin=dict(l=20, r=20, t=30, b=20),
+            xaxis=dict(linecolor="#0F172A", linewidth=2, mirror=True),
+            yaxis=dict(linecolor="#0F172A", linewidth=2, mirror=True, gridcolor="#E2E8F0")
+        )
         st.plotly_chart(fig1, use_container_width=True)
     with g2:
         mode_counts = df["Assigned_Unit"].apply(lambda x: "Gov Express Bus" if "GOV-BUS" in x else ("Micro-Feeder" if "FEEDER" in x else "Deferred")).value_counts()
-        fig2 = px.pie(names=mode_counts.index, values=mode_counts.values, hole=0.6, color_discrete_sequence=["#00E676", "#38BDF8", "#FF5252"])
-        fig2.update_layout(paper_bgcolor="#0A0F1D", plot_bgcolor="#0A0F1D", font=dict(color="#E2E8F0", family="Plus Jakarta Sans"), margin=dict(l=20, r=20, t=30, b=20))
+        fig2 = px.pie(
+            names=mode_counts.index, values=mode_counts.values, hole=0.55,
+            color_discrete_sequence=["#16A34A", "#0284C7", "#DC2626"]
+        )
+        fig2.update_traces(marker=dict(line=dict(color="#0F172A", width=2)))
+        fig2.update_layout(
+            paper_bgcolor="#FFFFFF",
+            plot_bgcolor="#FFFFFF",
+            font=dict(color="#0F172A", family="Lora, serif"),
+            margin=dict(l=20, r=20, t=30, b=20)
+        )
         st.plotly_chart(fig2, use_container_width=True)
 
 with tab_comms:
-    st.markdown("#### 📲 ZERO-DATA SMS / IVR STUDENT NOTIFICATION GATEWAY")
+    st.markdown("#### 📲 Zero-Data SMS / IVR Student Notification Gateway")
     sample_exam_student = df[df["Exam_Candidate"]].iloc[0]
     col_sms1, col_sms2 = st.columns(2)
     with col_sms1:
-        st.markdown("**PRIORITY EXAM BOARDING PASS (SMS PAYLOAD)**")
+        st.markdown("**Priority Exam Boarding Pass (SMS Payload)**")
         st.code(f"""[ROUTELESS EMERGENCY DISPATCH]
 ID: {sample_exam_student['Student_ID']} | EXAM PRIORITY CONFIRMED
 UNIT: {sample_exam_student['Assigned_Unit']}
@@ -432,7 +509,7 @@ PICKUP: {sample_exam_student['Origin_Village']} Main Chowk
 STATUS: {sample_exam_student['Corridor_Status']}
 BOARDING CODE: #EX-{np.random.randint(1000,9999)}""", language="text")
     with col_sms2:
-        st.markdown("**WAVE-2 DEFERRAL ADVISORY**")
+        st.markdown("**Wave-2 Deferral Advisory**")
         st.code(f"""[ROUTELESS TRANSIT ADVISORY]
 STATUS: WAVE-2 STANDBY
 DUE TO EXAM EMERGENCY & BUS SHORTAGE, MORNING SEAT
